@@ -1,3 +1,5 @@
+&nbsp;
+
 # Sliding Door Quick Price Calculator
 
 A single-page web calculator (built in Lovable, no spreadsheet) where a dealer enters a width and height, picks a colour finish, and immediately sees an offer price for both Rehau Synego Slide and Rehau Synego HST side by side.
@@ -46,3 +48,7 @@ Finish multipliers derived from the price list (white -> one side -> both sides)
 - Steel, rails, seals, glass, hardware, threshold: 1.000 (no finish effect)
 
 Implementation: TanStack Start route at `/` replacing the placeholder, calculation in a pure `src/lib/pricing.ts` module (unit-testable, reference-size assertions), plus a `pricing.test.ts` verifying the 3500 x 2178 white case returns 1770 / 2612 material and 2170 / 3212 with labour. No backend, no database — pure client-side math, so prices are editable by changing one constants file later.
+
+Desing it to be implementable i to [kvaliteetaken.ee](http://kvaliteetaken.ee) inquiry site
+
+&nbsp;
