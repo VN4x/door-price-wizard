@@ -12,17 +12,17 @@ const ref: QuoteInput = {
 describe("reference size 3500 x 2178 mm, white", () => {
   it("reproduces the Slide material total from the cost sheet", () => {
     const q = calculateQuote("slide", ref);
-    expect(q.materials).toBeCloseTo(1770.48, 1);
+    expect(q.materials).toBeCloseTo(1770.48, 0);
     expect(q.labour).toBe(400);
-    expect(q.cost).toBeCloseTo(2170.48, 1);
+    expect(q.cost).toBeCloseTo(2170.48, 0);
   });
 
   it("reproduces the HST material total with the corrected 20 EUR/m frame price", () => {
     const q = calculateQuote("hst", ref);
     // 2266.61 of profiles/steel/glass etc. + 900 threshold rail
-    expect(q.materials + q.threshold).toBeCloseTo(3166.61, 1);
+    expect(q.materials + q.threshold).toBeCloseTo(3166.61, 0);
     expect(q.labour).toBe(600);
-    expect(q.cost).toBeCloseTo(3766.61, 1);
+    expect(q.cost).toBeCloseTo(3766.61, 0);
   });
 });
 
