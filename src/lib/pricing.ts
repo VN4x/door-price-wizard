@@ -342,8 +342,12 @@ const HST_ONLY: CostLine[] = [
   },
 ];
 
-/** HST frame profile price: the sheet's 2 EUR/m is a typo, corrected to 20. */
-const HST_FRAME_PRICE = 20;
+/**
+ * HST-specific white unit prices from the cost sheet's HST column.
+ * The sheet's 2 EUR/m frame price is a typo, corrected to 20 EUR/m.
+ */
+const HST_PRICE_OVERRIDES: Record<string, number> = { leng: 20, post: 15 };
+
 
 export const SYSTEM_LABELS: Record<SystemId, string> = {
   slide: "Rehau Synego Slide",
