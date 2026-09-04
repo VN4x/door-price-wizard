@@ -362,10 +362,13 @@ export const SYSTEM_NOTES: Record<SystemId, string> = {
 export function getCostLines(system: SystemId): CostLine[] {
   const extra = system === "slide" ? SLIDE_ONLY : HST_ONLY;
   const lines = [...SHARED_LINES, ...extra];
-  return lines.map((line) =>
-    system === "hst" && line.id === "leng" ? { ...line, unitPrice: HST_FRAME_PRICE } : line,
-  );
+  if (system === "slide") return lines;
+  return lines.map((line) => {
+    const override = HST_PRICE_OVERRIDES[line.id];
+    return override === undefined ? line : { ...line, unitPrice: override };
+  });
 }
+
 
 /* ----------------------------------------------------------------- calculate */
 
