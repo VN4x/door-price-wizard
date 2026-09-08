@@ -5,6 +5,7 @@ Your calculator becomes the engine; around it we build six screens with mock dat
 ## What I take, what I change, what I ditch
 
 Take as described:
+
 - Public enquiry page (step-by-step, live preview, no internal prices)
 - Customer offer page (premium, print, accept)
 - Admin dashboard with sidebar, summary cards, status chips, simple pipeline list
@@ -14,6 +15,7 @@ Take as described:
 - Price list management with search + edit panel
 
 Changes I recommend:
+
 - Cost secrecy is a real permission, not just hidden UI. In this mock phase I use a single "role" switch (Customer / Sales / Admin) so you can see exactly what each person sees. When we later add real logins, costs move to the server and never reach a salesperson's browser at all. Anything hidden only by CSS is readable by a curious salesperson.
 - Glazing: 3–4 named packages (standard 2-glass, 3-glass warm, sound 35 dB, safety) rather than free specification. Faster for customers, and your pricing sheet only has one glass line today.
 - Quantity: one enquiry can hold several door lines instead of a single quantity field — most HST enquiries are 2–3 openings.
@@ -21,6 +23,7 @@ Changes I recommend:
 - Product type "Siegenia HST" is hardware, and your price sheet is Rehau Synego Slide / HST. I keep the profile system as the product (Synego Slide / Synego HST) and mention Siegenia hardware as a spec line.
 
 Ditch or defer:
+
 - Users and Settings pages: sidebar entries only, real screens once logins exist.
 - Orders / Production as separate full modules: one pipeline list with status chips covers it now; a full production module comes after you use it for a week.
 - Charts and analytics — the pipeline list is more useful.
