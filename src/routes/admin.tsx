@@ -25,14 +25,22 @@ export const Route = createFileRoute("/admin")({
   component: AdminLayout,
 });
 
-const NAV = [
+interface NavItem {
+  to: "/admin" | "/admin/enquiries" | "/admin/offers" | "/admin/orders" | "/admin/calculator" | "/admin/price-list";
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+  adminOnly?: boolean;
+}
+
+const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/enquiries", label: "Enquiries", icon: ClipboardList },
   { to: "/admin/offers", label: "Offers", icon: FileText },
   { to: "/admin/orders", label: "Orders", icon: Factory },
   { to: "/admin/calculator", label: "Calculator", icon: Calculator },
   { to: "/admin/price-list", label: "Price lists", icon: Tags, adminOnly: true },
-] as const;
+];
 
 function AdminLayout() {
   const { role, enquiries } = useStore();
