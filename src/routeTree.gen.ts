@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminCalculatorRouteImport } from './routes/admin.calculator'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin.enquiries'
+import { Route as AdminPriceListRouteImport } from './routes/admin.price-list'
 import { Route as EnquiryIndexRouteImport } from './routes/enquiry.index'
 import { Route as EnquirySentRouteImport } from './routes/enquiry.sent'
 import { Route as OfferOfferIdRouteImport } from './routes/offer.$offerId'
@@ -20,6 +22,7 @@ import { Route as AdminOffersIndexRouteImport } from './routes/admin.offers.inde
 import { Route as AdminOffersOfferIdRouteImport } from './routes/admin.offers.$offerId'
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin.orders.index'
 import { Route as AdminOrdersOrderIdGlassRouteImport } from './routes/admin.orders.$orderId.glass'
+import { Route as AdminOrdersOrderIdProductionRouteImport } from './routes/admin.orders.$orderId.production'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,9 +39,19 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCalculatorRoute = AdminCalculatorRouteImport.update({
+  id: '/calculator',
+  path: '/calculator',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
   id: '/enquiries',
   path: '/enquiries',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPriceListRoute = AdminPriceListRouteImport.update({
+  id: '/price-list',
+  path: '/price-list',
   getParentRoute: () => AdminRoute,
 } as any)
 const EnquiryIndexRoute = EnquiryIndexRouteImport.update({
@@ -76,11 +89,19 @@ const AdminOrdersOrderIdGlassRoute = AdminOrdersOrderIdGlassRouteImport.update({
   path: '/orders/$orderId/glass',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminOrdersOrderIdProductionRoute =
+  AdminOrdersOrderIdProductionRouteImport.update({
+    id: '/orders/$orderId/production',
+    path: '/orders/$orderId/production',
+    getParentRoute: () => AdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin/calculator': typeof AdminCalculatorRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/price-list': typeof AdminPriceListRoute
   '/enquiry/sent': typeof EnquirySentRoute
   '/offer/$offerId': typeof OfferOfferIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -89,10 +110,13 @@ export interface FileRoutesByFullPath {
   '/admin/offers/': typeof AdminOffersIndexRoute
   '/admin/orders/': typeof AdminOrdersIndexRoute
   '/admin/orders/$orderId/glass': typeof AdminOrdersOrderIdGlassRoute
+  '/admin/orders/$orderId/production': typeof AdminOrdersOrderIdProductionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/calculator': typeof AdminCalculatorRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/price-list': typeof AdminPriceListRoute
   '/enquiry/sent': typeof EnquirySentRoute
   '/offer/$offerId': typeof OfferOfferIdRoute
   '/admin': typeof AdminIndexRoute
@@ -101,12 +125,15 @@ export interface FileRoutesByTo {
   '/admin/offers': typeof AdminOffersIndexRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
   '/admin/orders/$orderId/glass': typeof AdminOrdersOrderIdGlassRoute
+  '/admin/orders/$orderId/production': typeof AdminOrdersOrderIdProductionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin/calculator': typeof AdminCalculatorRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
+  '/admin/price-list': typeof AdminPriceListRoute
   '/enquiry/sent': typeof EnquirySentRoute
   '/offer/$offerId': typeof OfferOfferIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -115,13 +142,16 @@ export interface FileRoutesById {
   '/admin/offers/': typeof AdminOffersIndexRoute
   '/admin/orders/': typeof AdminOrdersIndexRoute
   '/admin/orders/$orderId/glass': typeof AdminOrdersOrderIdGlassRoute
+  '/admin/orders/$orderId/production': typeof AdminOrdersOrderIdProductionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/admin'
+    | '/admin/calculator'
     | '/admin/enquiries'
+    | '/admin/price-list'
     | '/enquiry/sent'
     | '/offer/$offerId'
     | '/admin/'
@@ -130,10 +160,13 @@ export interface FileRouteTypes {
     | '/admin/offers/'
     | '/admin/orders/'
     | '/admin/orders/$orderId/glass'
+    | '/admin/orders/$orderId/production'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin/calculator'
     | '/admin/enquiries'
+    | '/admin/price-list'
     | '/enquiry/sent'
     | '/offer/$offerId'
     | '/admin'
@@ -142,11 +175,14 @@ export interface FileRouteTypes {
     | '/admin/offers'
     | '/admin/orders'
     | '/admin/orders/$orderId/glass'
+    | '/admin/orders/$orderId/production'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/admin/calculator'
     | '/admin/enquiries'
+    | '/admin/price-list'
     | '/enquiry/sent'
     | '/offer/$offerId'
     | '/admin/'
@@ -155,6 +191,7 @@ export interface FileRouteTypes {
     | '/admin/offers/'
     | '/admin/orders/'
     | '/admin/orders/$orderId/glass'
+    | '/admin/orders/$orderId/production'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -188,11 +225,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/calculator': {
+      id: '/admin/calculator'
+      path: '/calculator'
+      fullPath: '/admin/calculator'
+      preLoaderRoute: typeof AdminCalculatorRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/enquiries': {
       id: '/admin/enquiries'
       path: '/enquiries'
       fullPath: '/admin/enquiries'
       preLoaderRoute: typeof AdminEnquiriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/price-list': {
+      id: '/admin/price-list'
+      path: '/price-list'
+      fullPath: '/admin/price-list'
+      preLoaderRoute: typeof AdminPriceListRouteImport
       parentRoute: typeof AdminRoute
     }
     '/enquiry/': {
@@ -244,25 +295,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOrdersOrderIdGlassRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/orders/$orderId/production': {
+      id: '/admin/orders/$orderId/production'
+      path: '/orders/$orderId/production'
+      fullPath: '/admin/orders/$orderId/production'
+      preLoaderRoute: typeof AdminOrdersOrderIdProductionRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminCalculatorRoute: typeof AdminCalculatorRoute
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
+  AdminPriceListRoute: typeof AdminPriceListRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminOffersOfferIdRoute: typeof AdminOffersOfferIdRoute
   AdminOffersIndexRoute: typeof AdminOffersIndexRoute
   AdminOrdersIndexRoute: typeof AdminOrdersIndexRoute
   AdminOrdersOrderIdGlassRoute: typeof AdminOrdersOrderIdGlassRoute
+  AdminOrdersOrderIdProductionRoute: typeof AdminOrdersOrderIdProductionRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCalculatorRoute: AdminCalculatorRoute,
   AdminEnquiriesRoute: AdminEnquiriesRoute,
+  AdminPriceListRoute: AdminPriceListRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminOffersOfferIdRoute: AdminOffersOfferIdRoute,
   AdminOffersIndexRoute: AdminOffersIndexRoute,
   AdminOrdersIndexRoute: AdminOrdersIndexRoute,
   AdminOrdersOrderIdGlassRoute: AdminOrdersOrderIdGlassRoute,
+  AdminOrdersOrderIdProductionRoute: AdminOrdersOrderIdProductionRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
