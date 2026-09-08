@@ -34,8 +34,8 @@ export function StatusChip({
 }: {
   label: string;
   tone?: Tone;
-  className?: string;
-  size?: "sm" | "lg";
+  className?: string | undefined;
+  size?: "sm" | "lg" | undefined;
 }) {
   return (
     <span

@@ -59,15 +59,14 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
       duplicateOffer: (id) => {
         const source = offers.find((o) => o.id === id);
         if (!source) return undefined;
+        const { sentAt: _s, viewedAt: _v, ...base } = source;
         const copy: Offer = {
-          ...source,
+          ...base,
           id: `${source.id}-v${source.version + 1}`,
           version: source.version + 1,
           status: "draft",
           createdAt: today(),
           validUntil: plusDays(30),
-          sentAt: undefined,
-          viewedAt: undefined,
           lines: source.lines.map((l: DoorLine) => ({ ...l, id: `${l.id}-c` })),
         };
         setOffers((prev) => [copy, ...prev]);

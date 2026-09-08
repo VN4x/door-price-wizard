@@ -92,7 +92,7 @@ export function DoorDrawing({
                 fontSize={22}
                 fontWeight={600}
               >
-                {glass[i].width} × {glass[i].height}
+                {glass[i]!.width} × {glass[i]!.height}
               </text>
             )}
             {detail && (

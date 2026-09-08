@@ -33,11 +33,11 @@ export interface Enquiry {
   number: string;
   customerName: string;
   email: string;
-  phone?: string;
+  phone?: string | undefined;
   lines: DoorLine[];
   needsDelivery: boolean;
   needsInstallation: boolean;
-  note?: string;
+  note?: string | undefined;
   createdAt: string;
   status: EnquiryStatus;
 }
@@ -51,7 +51,7 @@ export interface Offer {
   enquiryId: string;
   customerName: string;
   email: string;
-  phone?: string;
+  phone?: string | undefined;
   lines: DoorLine[];
   markupPercent: number;
   /** Manual override of the product net total, EUR excl. VAT. */
@@ -61,8 +61,8 @@ export interface Offer {
   status: OfferStatus;
   createdAt: string;
   validUntil: string;
-  viewedAt?: string;
-  sentAt?: string;
+  viewedAt?: string | undefined;
+  sentAt?: string | undefined;
 }
 
 export type OrderStatus =
@@ -80,8 +80,8 @@ export interface Order {
   lines: DoorLine[];
   orderDate: string;
   status: OrderStatus;
-  drawingsPrintedAt?: string;
-  glassOrderedAt?: string;
+  drawingsPrintedAt?: string | undefined;
+  glassOrderedAt?: string | undefined;
 }
 
 export interface PriceItem {
