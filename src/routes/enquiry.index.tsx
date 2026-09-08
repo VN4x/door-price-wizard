@@ -5,7 +5,8 @@ import { DoorDrawing } from "@/components/DoorDrawing";
 import { GLAZING_LIST } from "@/lib/glass";
 import { FINISH_LABELS, LIMITS, suggestThreshold, validateSize } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
-import type { ActiveSide, DoorLine, Finish, GlazingId } from "@/types";
+import type { Finish } from "@/lib/pricing";
+import type { ActiveSide, DoorLine, GlazingId } from "@/types";
 
 export const Route = createFileRoute("/enquiry/")({
   head: () => ({

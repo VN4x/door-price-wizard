@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EnquiryIndexRouteImport } from './routes/enquiry.index'
+import { Route as EnquirySentRouteImport } from './routes/enquiry.sent'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EnquiryIndexRoute = EnquiryIndexRouteImport.update({
+  id: '/enquiry/',
+  path: '/enquiry/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnquirySentRoute = EnquirySentRouteImport.update({
+  id: '/enquiry/sent',
+  path: '/enquiry/sent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/enquiry/sent': typeof EnquirySentRoute
+  '/enquiry/': typeof EnquiryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/enquiry/sent': typeof EnquirySentRoute
+  '/enquiry': typeof EnquiryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/enquiry/sent': typeof EnquirySentRoute
+  '/enquiry/': typeof EnquiryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/enquiry/sent' | '/enquiry/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/enquiry/sent' | '/enquiry'
+  id: '__root__' | '/' | '/enquiry/sent' | '/enquiry/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EnquirySentRoute: typeof EnquirySentRoute
+  EnquiryIndexRoute: typeof EnquiryIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/enquiry/': {
+      id: '/enquiry/'
+      path: '/enquiry'
+      fullPath: '/enquiry/'
+      preLoaderRoute: typeof EnquiryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/enquiry/sent': {
+      id: '/enquiry/sent'
+      path: '/enquiry/sent'
+      fullPath: '/enquiry/sent'
+      preLoaderRoute: typeof EnquirySentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EnquirySentRoute: EnquirySentRoute,
+  EnquiryIndexRoute: EnquiryIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
