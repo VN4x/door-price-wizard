@@ -15,7 +15,7 @@ export const Route = createFileRoute("/admin/orders/$orderId/production")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: ProductionOrder;
+  component: ProductionOrder,
 });
 
 function unitFor(driver: string): string {
