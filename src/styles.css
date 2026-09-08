@@ -162,8 +162,20 @@
 }
 
 @media print {
-  .lg\:sticky,
-  button {
-    display: none !important;
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .doc {
+    padding: 0 !important;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
   }
 }
