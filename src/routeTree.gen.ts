@@ -11,9 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminEnquiriesRouteImport } from './routes/admin.enquiries'
 import { Route as EnquiryIndexRouteImport } from './routes/enquiry.index'
 import { Route as EnquirySentRouteImport } from './routes/enquiry.sent'
 import { Route as OfferOfferIdRouteImport } from './routes/offer.$offerId'
+import { Route as AdminOffersIndexRouteImport } from './routes/admin.offers.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -24,6 +27,16 @@ const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
+  id: '/enquiries',
+  path: '/enquiries',
+  getParentRoute: () => AdminRoute,
 } as any)
 const EnquiryIndexRoute = EnquiryIndexRouteImport.update({
   id: '/enquiry/',
@@ -40,46 +53,77 @@ const OfferOfferIdRoute = OfferOfferIdRouteImport.update({
   path: '/offer/$offerId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOffersIndexRoute = AdminOffersIndexRouteImport.update({
+  id: '/offers/',
+  path: '/offers/',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin/enquiries': typeof AdminEnquiriesRoute
   '/enquiry/sent': typeof EnquirySentRoute
   '/offer/$offerId': typeof OfferOfferIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/enquiry/': typeof EnquiryIndexRoute
+  '/admin/offers/': typeof AdminOffersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin/enquiries': typeof AdminEnquiriesRoute
   '/enquiry/sent': typeof EnquirySentRoute
   '/offer/$offerId': typeof OfferOfferIdRoute
+  '/admin': typeof AdminIndexRoute
   '/enquiry': typeof EnquiryIndexRoute
+  '/admin/offers': typeof AdminOffersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin/enquiries': typeof AdminEnquiriesRoute
   '/enquiry/sent': typeof EnquirySentRoute
   '/offer/$offerId': typeof OfferOfferIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/enquiry/': typeof EnquiryIndexRoute
+  '/admin/offers/': typeof AdminOffersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/enquiry/sent' | '/offer/$offerId' | '/enquiry/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/admin/enquiries'
+    | '/enquiry/sent'
+    | '/offer/$offerId'
+    | '/admin/'
+    | '/enquiry/'
+    | '/admin/offers/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/enquiry/sent' | '/offer/$offerId' | '/enquiry'
+  to:
+    | '/'
+    | '/admin/enquiries'
+    | '/enquiry/sent'
+    | '/offer/$offerId'
+    | '/admin'
+    | '/enquiry'
+    | '/admin/offers'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/admin/enquiries'
     | '/enquiry/sent'
     | '/offer/$offerId'
+    | '/admin/'
     | '/enquiry/'
+    | '/admin/offers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   EnquirySentRoute: typeof EnquirySentRoute
   OfferOfferIdRoute: typeof OfferOfferIdRoute
   EnquiryIndexRoute: typeof EnquiryIndexRoute
@@ -100,6 +144,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/enquiries': {
+      id: '/admin/enquiries'
+      path: '/enquiries'
+      fullPath: '/admin/enquiries'
+      preLoaderRoute: typeof AdminEnquiriesRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/enquiry/': {
       id: '/enquiry/'
@@ -122,12 +180,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfferOfferIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/offers/': {
+      id: '/admin/offers/'
+      path: '/offers'
+      fullPath: '/admin/offers/'
+      preLoaderRoute: typeof AdminOffersIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminEnquiriesRoute: typeof AdminEnquiriesRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminOffersIndexRoute: typeof AdminOffersIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminEnquiriesRoute: AdminEnquiriesRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminOffersIndexRoute: AdminOffersIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   EnquirySentRoute: EnquirySentRoute,
   OfferOfferIdRoute: OfferOfferIdRoute,
   EnquiryIndexRoute: EnquiryIndexRoute,
