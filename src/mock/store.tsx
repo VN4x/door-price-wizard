@@ -45,7 +45,7 @@ interface StoreValue {
   removeCartItem: (id: string) => void;
   clearCart: () => void;
   /** Creates the enquiry and the offer, and marks the offer as emailed. */
-  submitCart: () => Offer | undefined;
+  submitCart: (details: CustomerDetails) => Offer | undefined;
   requestCallback: (name: string, phone: string) => void;
   addEnquiry: (input: Omit<Enquiry, "id" | "number" | "createdAt" | "status">) => Enquiry;
   updateOffer: (id: string, patch: Partial<Offer>) => void;
@@ -141,8 +141,9 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
         setCart([]);
         writeLocal(CART_KEY, []);
       },
-      submitCart: () => {
-        if (!customer || cart.length === 0) return undefined;
+      submitCart: (details) => {
+        if (cart.length === 0) return undefined;
+        const customer = details;
         const n = seq + 1;
         setSeq(n);
         const lines: DoorLine[] = cart.map((c, i) => ({ ...c.line, id: `line-${i + 1}` }));

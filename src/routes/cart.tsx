@@ -81,9 +81,9 @@ function CartPage() {
       remember,
     };
     saveCustomer(details);
-    const offer = submitCart();
+    const offer = submitCart(details);
     if (!offer) return setError("Your basket is empty.");
-    void navigate({ to: "/enquiry/sent", search: { token: offer.token } });
+    navigate({ to: "/enquiry/sent", search: { token: offer.token } }).catch(() => {});
   };
 
   return (
