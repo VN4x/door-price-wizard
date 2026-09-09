@@ -9,18 +9,22 @@ The rail is charged as a whole piece, HST only, chosen from the door width:
 - up to 2500 mm: 2.5 m rail, 600 EUR
 - 2501-3000 mm: 3.0 m rail, 750 EUR
 - 3001-3700 mm: 3.7 m rail, 900 EUR
-- wider than 3700 mm: price on request, no automatic price shown
+- wider than 3700 mm: price 1359 eur
 
 Nothing about rails is shown or chosen by the customer. Synego Slide never gets a rail.
+
+Extr button "Slide or HST - the differences"  - perform research and list main 5 points, when choose what 
 
 ## 2. Glass affects the price
 
 Today the glass package is chosen in the configurator but does not change the price. Add a clear surcharge per package on top of the standard glass price, shown on both the price page and the basket:
 
-- Standard 2-glass: included
-- Warm 3-glass: surcharge
-- Quiet 3-glass: surcharge
-- Toughened / laminated safety: surcharge
+- Since noone uses 2 glass in large glazings these days in estonia our sandard  is 3-glass: included. Extra addition "warm spacer" 15 eur per sqm. Calculate sum
+- Tinted  3-glass: surcharge calculate sum for this door 30 eur per sqm
+- Quiet 3-glass: surcharge calculate: 36 dB + 24 eur owr sqm. 40dB +60 eur oer sqm.
+- Toughened / laminated safety: surcharge . Thermal treatment ir laminated outside 40 euros per sqm, inside same 40 adds. Infolink to glasses subsite - when choose safety glass
+- Sarfactor 0.39 ; 0.35 and 0.29 options. Ifo link on glasses subsite - solar section. Same for every glass type 
+- Admin should have pricelist for additions, with show in offer radio button. So all thise licks etc we can show or not. Offer total should have opt for general discount manually enterable or autoentered while campaign 
 
 I will start with placeholder figures and you replace them with your real ones in one screen. The extras list (lock, extended warranty, safety glass, solar glass, extra gasket) stays as agreed.
 
@@ -37,7 +41,7 @@ I will start with placeholder figures and you replace them with your real ones i
 Every row already carries three fields, and the add/edit panel will make them the main choices:
 
 - Counted as: whole door frame length, sash length, mullion height, door width, glass area, or a fixed number of pieces
-- Quantity at the reference door (3500 x 2178 mm): the amount used on that door, from which every other size is scaled
+- Quantity at the reference door (2000 x 200 mm): the amount used on that door, from which every other size is scaled
 - Used by: Slide, HST, or both, with an optional different purchase price for HST
 
 So adding a row is three answers: how it is counted, how much of it the reference door uses, and which systems use it. That is enough for every article in your two sheets. My suggestion: keep your current sheet as it is; you do not need to rewrite it. If you later want per-article waste allowances or supplier codes, we add those two columns then.
@@ -52,3 +56,9 @@ Everything lives in the browser for now. Real accounts, real emailed offers, ser
 - Configurator: add a second submit action that returns to the price page with the basket kept.
 - Details step: extend `CustomerDetails` with an account flag and a locally stored profile in `src/mock/store.tsx`.
 - Price list editor: turn `driver`, `refQty` and `systems` into labelled selects with plain-language help text in `src/routes/admin.price-list.tsx`.
+
+Plan i18n for estonian as default, ru, eng, fi, swe
+
+Plan dark mode button
+
+In slide hst differences lopul page show some picture too
