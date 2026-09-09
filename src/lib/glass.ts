@@ -1,14 +1,5 @@
+import { GLASS_RULES } from "@/lib/production";
 import type { DoorLine, GlazingId, GlazingPackage } from "@/types";
-
-/** Profile deductions used to derive glass sizes from the overall opening. */
-export const GLASS_DEDUCTIONS = {
-  /** Frame + sash width taken off the overall width, per panel. */
-  widthPerPanel: 172,
-  /** Frame + sash height taken off the overall height. */
-  height: 205,
-  /** Panels always overlap on the meeting stile. */
-  overlap: 46,
-} as const;
 
 export const GLAZING_PACKAGES: Record<GlazingId, GlazingPackage> = {
   std2: {
@@ -45,47 +36,88 @@ export interface GlassUnit {
   height: number;
   qty: number;
   glazing: string;
+  /** SLIDE or HST — the two systems have different production sizes. */
+  system: string;
 }
 
-/** Glass sizes for a two-panel slider: one fixed panel, one active panel. */
+/**
+ * Glass sizes for a two-panel door: one active (sliding) panel and one fixed
+ * panel. Slide and HST deduct different amounts, see `GLASS_RULES`.
+ */
 export function glassUnitsForLine(line: DoorLine, lineIndex = 0): GlassUnit[] {
-  const panelWidth = Math.round(
-    (line.width + GLASS_DEDUCTIONS.overlap) / 2 - GLASS_DEDUCTIONS.widthPerPanel,
-  );
-  const panelHeight = Math.round(line.height - GLASS_DEDUCTIONS.height);
+  const rule = GLASS_RULES[line.system];
+  const half = line.width / 2 + rule.splitOffset;
+  const activeWidth = Math.round(half - rule.activeDeductW);
+  const fixedWidth = Math.round(half - rule.fixedDeductW);
+  const panelHeight = Math.round(line.height - rule.deductH);
   const glazing = GLAZING_PACKAGES[line.glazing].description;
+  const system = line.system === "hst" ? "HST" : "SLIDE";
   const prefix = `P${lineIndex + 1}`;
-  const activeFirst = line.activeSide === "L";
-  return [
-    {
-      label: `${prefix}-${activeFirst ? "A" : "F"} ${activeFirst ? "active" : "fixed"} (left)`,
-      width: panelWidth,
-      height: panelHeight,
-      qty: line.qty,
-      glazing,
-    },
-    {
-      label: `${prefix}-${activeFirst ? "F" : "A"} ${activeFirst ? "fixed" : "active"} (right)`,
-      width: panelWidth,
-      height: panelHeight,
-      qty: line.qty,
-      glazing,
-    },
-  ];
+  const activeLeft = line.activeSide === "L";
+
+  const active: GlassUnit = {
+    label: `${prefix}-A active (${activeLeft ? "left" : "right"})`,
+    width: activeWidth,
+    height: panelHeight,
+    qty: line.qty,
+    glazing,
+    system,
+  };
+  const fixed: GlassUnit = {
+    label: `${prefix}-F fixed (${activeLeft ? "right" : "left"})`,
+    width: fixedWidth,
+    height: panelHeight,
+    qty: line.qty,
+    glazing,
+    system,
+  };
+  return activeLeft ? [active, fixed] : [fixed, active];
 }
 
 export function glassUnitsForOrder(lines: DoorLine[]): GlassUnit[] {
   return lines.flatMap((line, i) => glassUnitsForLine(line, i));
 }
 
+export interface GlassGroup {
+  width: number;
+  height: number;
+  glazing: string;
+  system: string;
+  pieces: number;
+  labels: string[];
+}
+
+/** Same size and glazing collapsed into one row with a piece count. */
+export function groupGlassUnits(units: GlassUnit[]): GlassGroup[] {
+  const map = new Map<string, GlassGroup>();
+  for (const u of units) {
+    const key = `${u.width}x${u.height}|${u.glazing}|${u.system}`;
+    const existing = map.get(key);
+    if (existing) {
+      existing.pieces += u.qty;
+      existing.labels.push(u.label);
+    } else {
+      map.set(key, {
+        width: u.width,
+        height: u.height,
+        glazing: u.glazing,
+        system: u.system,
+        pieces: u.qty,
+        labels: [u.label],
+      });
+    }
+  }
+  return [...map.values()].sort((a, b) => b.width * b.height - a.width * a.height);
+}
+
 export function glassOrderText(orderNumber: string, customer: string, lines: DoorLine[]): string {
   const rows = glassUnitsForOrder(lines).map(
-    (u) => `${u.label};${u.width};${u.height};${u.qty};${u.glazing}`,
+    (u) => `${u.label};${u.system};${u.width};${u.height};${u.qty};${u.glazing}`,
   );
   return [
     `ORDER;${orderNumber}`,
     `CUSTOMER;${customer}`,
-    "LABEL;WIDTH_MM;HEIGHT_MM;QTY;GLAZING",
+    "LABEL;SYSTEM;WIDTH_MM;HEIGHT_MM;QTY;GLAZING",
     ...rows,
     "",
   ].join("\n");

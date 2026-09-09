@@ -1,68 +1,76 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2 } from "lucide-react";
+import { CallbackBox } from "@/components/CallbackBox";
+import { SiteHeader } from "@/components/SiteHeader";
 import { useStore } from "@/mock/store";
 
 export const Route = createFileRoute("/enquiry/sent")({
+  validateSearch: (search: Record<string, unknown>): { token?: string | undefined } => {
+    const raw = search["token"];
+    return typeof raw === "string" ? { token: raw } : {};
+  },
   head: () => ({
     meta: [
-      { title: "Enquiry received | Kvaliteetaken" },
+      { title: "Your offer is on its way | Kvaliteetaken" },
       {
         name: "description",
-        content: "Your sliding-door enquiry has been received. We answer with a written offer.",
+        content: "Your sliding door offer has been sent to your email with a private link to open it.",
       },
-      { property: "og:title", content: "Enquiry received | Kvaliteetaken" },
-      { property: "og:description", content: "We have your enquiry and will send a written offer." },
+      { property: "og:title", content: "Your offer is on its way | Kvaliteetaken" },
+      { property: "og:description", content: "Your sliding door offer has been sent by email." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: Sent,
+  component: SentPage,
 });
 
-function Sent() {
-  const { enquiries } = useStore();
-  const latest = enquiries[0];
+function SentPage() {
+  const { token } = Route.useSearch();
+  const { offers } = useStore();
+  const offer = token ? offers.find((o) => o.token === token) : undefined;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-5 py-16">
-      <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
-        <CheckCircle2 className="mx-auto size-12 text-accent" aria-hidden />
-        <h1 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
-          Thank you, we have your enquiry
-        </h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          {latest
-            ? `Your reference is ${latest.number}. We will email a written offer to ${latest.email}, usually within one working day.`
-            : "We will email a written offer, usually within one working day."}
-        </p>
-        {latest && (
-          <dl className="mt-6 space-y-2 rounded-xl border border-border bg-secondary/40 p-5 text-left text-sm">
-            {latest.lines.map((l) => (
-              <div key={l.id} className="flex justify-between gap-4">
-                <dt className="text-muted-foreground">Sliding door</dt>
-                <dd className="text-right font-medium text-foreground">
-                  {l.width} × {l.height} mm · {l.qty} pc · opens {l.activeSide === "L" ? "left" : "right"}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        )}
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link
-            to="/"
-            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Back to home
-          </Link>
-          <Link
-            to="/enquiry"
-            className="rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-          >
-            Send another opening
-          </Link>
+    <>
+      <SiteHeader />
+      <main className="min-h-screen bg-background pb-16">
+        <div className="mx-auto max-w-3xl px-5 py-14 sm:px-8">
+          <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
+            <CheckCircle2 className="size-8 text-accent" aria-hidden />
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
+              Your offer is ready
+            </h1>
+            {offer ? (
+              <>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  We have sent offer <strong className="text-foreground">{offer.number}</strong> to{" "}
+                  <strong className="text-foreground">{offer.email}</strong>. It is valid until{" "}
+                  {offer.validUntil}.
+                </p>
+                <Link
+                  to="/offer/$token"
+                  params={{ token: offer.token }}
+                  className="mt-6 inline-flex rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  Open my offer
+                </Link>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  The link is private — only someone who has it can open your offer.
+                </p>
+              </>
+            ) : (
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                We could not find that offer in this browser. Please check the link in your email.
+              </p>
+            )}
+          </div>
+
+          <div className="mt-6">
+            <CallbackBox />
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

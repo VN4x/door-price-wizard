@@ -1,430 +1,383 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowRight, Plus } from "lucide-react";
+import { SiteHeader } from "@/components/SiteHeader";
 import { DoorDrawing } from "@/components/DoorDrawing";
+import { EXTRAS } from "@/lib/extras";
 import { GLAZING_LIST } from "@/lib/glass";
-import { FINISH_LABELS, LIMITS, suggestThreshold, validateSize } from "@/lib/pricing";
+import { publicPrice } from "@/lib/public-price";
+import {
+  FINISH_LABELS,
+  LIMITS,
+  SYSTEM_LABELS,
+  SYSTEM_NOTES,
+  eur,
+  thresholdForWidth,
+  validateSize,
+  type Finish,
+  type SystemId,
+} from "@/lib/pricing";
 import { useStore } from "@/mock/store";
-import type { Finish } from "@/lib/pricing";
-import type { ActiveSide, DoorLine, GlazingId } from "@/types";
+import type { ActiveSide, ExtraId, GlazingId } from "@/types";
 
 export const Route = createFileRoute("/enquiry/")({
   head: () => ({
     meta: [
-      { title: "Request an offer for your sliding door | Kvaliteetaken" },
+      { title: "Configure your sliding door | Kvaliteetaken" },
       {
         name: "description",
         content:
-          "Send your opening size, colour and glazing choice and receive a written sliding-door offer with delivery and installation priced separately.",
+          "Choose size, colour, glazing and the opening side of your sliding door, then add it to your basket for a written offer.",
       },
-      { property: "og:title", content: "Request an offer for your sliding door" },
+      { property: "og:title", content: "Configure your sliding door | Kvaliteetaken" },
       {
         property: "og:description",
-        content: "A short form: size, colour, glazing, opening side. Offer within one working day.",
+        content: "Set size, colour, glazing and opening side, then request a written offer.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: EnquiryForm,
+  component: ConfigurePage,
 });
 
-const FINISH_OPTIONS: { id: Finish; label: string; hint: string }[] = [
-  { id: "white", label: "White inside / white outside", hint: "Most common, best price" },
-  { id: "oneSide", label: "Colour outside / white inside", hint: "Popular with dark facades" },
-  { id: "bothSides", label: "Colour inside / colour outside", hint: "Fully laminated" },
-];
+const FINISHES: Finish[] = ["white", "oneSide", "bothSides"];
 
-const STEPS = ["Your details", "Product & size", "Colour & glazing", "Extras"];
-
-function EnquiryForm() {
+function ConfigurePage() {
   const navigate = useNavigate();
-  const { addEnquiry } = useStore();
+  const { pending, addToCart, cart } = useStore();
 
-  const [step, setStep] = useState(0);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [width, setWidth] = useState("3500");
-  const [height, setHeight] = useState("2178");
-  const [qty, setQty] = useState("1");
-  const [activeSide, setActiveSide] = useState<ActiveSide>("L");
-  const [finish, setFinish] = useState<Finish>("white");
-  const [glazing, setGlazing] = useState<GlazingId>("warm3");
-  const [delivery, setDelivery] = useState(true);
-  const [installation, setInstallation] = useState(true);
+  const [system, setSystem] = useState<SystemId>(pending?.system ?? "hst");
+  const [width, setWidth] = useState(String(pending?.width ?? 2000));
+  const [height, setHeight] = useState(String(pending?.height ?? 2000));
+  const [finish, setFinish] = useState<Finish>(pending?.finish ?? "white");
+  const [extras, setExtras] = useState<ExtraId[]>(pending?.extras ?? []);
+  const [glazing, setGlazing] = useState<GlazingId>("std2");
+  const [activeSide, setActiveSide] = useState<ActiveSide>("R");
+  const [qty, setQty] = useState(1);
   const [note, setNote] = useState("");
 
   const w = Number(width);
   const h = Number(height);
-  const q = Math.max(1, Math.min(10, Number(qty) || 1));
   const sizeError = validateSize(w, h);
+  const price = useMemo(
+    () => publicPrice({ system, width: w, height: h, finish, extras }),
+    [system, w, h, finish, extras],
+  );
+  const canAdd = !sizeError && price.totalGross !== null && qty > 0;
 
-  const line: DoorLine = {
-    id: "preview",
-    system: "hst",
-    width: sizeError ? 3500 : w,
-    height: sizeError ? 2178 : h,
-    qty: q,
-    finish,
-    glazing,
-    activeSide,
-    threshold: suggestThreshold(sizeError ? 3500 : w),
-  };
-
-  const contactOk = name.trim().length > 1 && /.+@.+\..+/.test(email);
-  const canContinue = step === 0 ? contactOk : step === 1 ? !sizeError : true;
-
-  const submit = () => {
-    addEnquiry({
-      customerName: name.trim(),
-      email: email.trim(),
-      ...(phone.trim() ? { phone: phone.trim() } : {}),
-      lines: [{ ...line, id: "line-1" }],
-      needsDelivery: delivery,
-      needsInstallation: installation,
+  const add = (then: "cart" | "more") => {
+    if (!canAdd) return;
+    addToCart({
+      kind: "slidingDoor",
+      line: {
+        id: `line-${Date.now()}`,
+        system,
+        width: w,
+        height: h,
+        qty,
+        finish,
+        glazing,
+        activeSide,
+        threshold: thresholdForWidth(w) ?? "t37",
+        extras,
+      },
       ...(note.trim() ? { note: note.trim() } : {}),
     });
-    void navigate({ to: "/enquiry/sent" });
+    if (then === "cart") void navigate({ to: "/cart" });
+    else {
+      setNote("");
+      setQty(1);
+    }
   };
 
   return (
-    <main className="min-h-screen bg-background pb-16">
-      <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-          Request your offer
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Four short steps. Nothing is ordered — you receive a written offer to look at calmly.
-        </p>
+    <>
+      <SiteHeader />
+      <main className="min-h-screen bg-background pb-16">
+        <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+            Configure your door
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            All prices include VAT. Add as many doors as you need — you enter your contact details
+            once, at the basket.
+          </p>
 
-        <ol className="mt-8 flex flex-wrap gap-2">
-          {STEPS.map((s, i) => (
-            <li key={s}>
-              <button
-                type="button"
-                onClick={() => i <= step && setStep(i)}
-                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-                  i === step
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : i < step
-                      ? "border-border bg-card text-foreground"
-                      : "border-dashed border-border text-muted-foreground"
-                }`}
-              >
-                {i < step ? <Check className="size-4" aria-hidden /> : <span>{i + 1}</span>}
-                {s}
-              </button>
-            </li>
-          ))}
-        </ol>
-
-        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
-            {step === 0 && (
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Your name" value={name} onChange={setName} placeholder="Mari Maasikas" />
-                <Field
-                  label="Email"
-                  value={email}
-                  onChange={setEmail}
-                  type="email"
-                  placeholder="mari@example.ee"
-                />
-                <Field
-                  label="Phone (optional)"
-                  value={phone}
-                  onChange={setPhone}
-                  placeholder="+372 5xx xxxx"
-                />
-              </div>
-            )}
-
-            {step === 1 && (
-              <div className="grid gap-6">
-                <div className="rounded-xl border border-border bg-secondary/40 p-4">
-                  <p className="text-sm font-semibold text-foreground">
-                    Sliding door, Siegenia HST hardware
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Two-panel slider: one panel slides, one stays fixed.
-                  </p>
+          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="grid gap-6">
+              <Panel title="System">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {(["slide", "hst"] as SystemId[]).map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setSystem(s)}
+                      aria-pressed={system === s}
+                      className={`rounded-xl border p-4 text-left transition-colors ${
+                        system === s ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/60"
+                      }`}
+                    >
+                      <span className="block text-sm font-semibold text-foreground">
+                        {SYSTEM_LABELS[s]}
+                      </span>
+                      <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
+                        {SYSTEM_NOTES[s]}
+                      </span>
+                    </button>
+                  ))}
                 </div>
+              </Panel>
 
-                <div>
-                  <p className="mb-2 text-sm font-semibold text-foreground">Which side opens?</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {(["L", "R"] as ActiveSide[]).map((side) => (
-                      <button
-                        key={side}
-                        type="button"
-                        onClick={() => setActiveSide(side)}
-                        aria-pressed={activeSide === side}
-                        className={`flex flex-col items-center gap-1 rounded-xl border px-4 py-5 transition-colors ${
-                          activeSide === side
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/40"
-                        }`}
-                      >
-                        <span className="text-3xl font-semibold text-foreground">
-                          {side === "L" ? "←" : "→"}
+              <Panel title="Size and amount">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  <Field label={`Width mm (${LIMITS.minWidth}–${LIMITS.maxWidth})`}>
+                    <input
+                      type="number"
+                      value={width}
+                      onChange={(e) => setWidth(e.target.value)}
+                      className="input"
+                    />
+                  </Field>
+                  <Field label={`Height mm (${LIMITS.minHeight}–${LIMITS.maxHeight})`}>
+                    <input
+                      type="number"
+                      value={height}
+                      onChange={(e) => setHeight(e.target.value)}
+                      className="input"
+                    />
+                  </Field>
+                  <Field label="Quantity">
+                    <input
+                      type="number"
+                      min={1}
+                      value={qty}
+                      onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))}
+                      className="input"
+                    />
+                  </Field>
+                </div>
+                {sizeError && <p className="mt-3 text-sm font-medium text-destructive">{sizeError}</p>}
+              </Panel>
+
+              <Panel title="Colour">
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {FINISHES.map((f) => (
+                    <button
+                      key={f}
+                      type="button"
+                      onClick={() => setFinish(f)}
+                      aria-pressed={finish === f}
+                      className={`rounded-xl border p-4 text-left text-sm transition-colors ${
+                        finish === f ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/60"
+                      }`}
+                    >
+                      <span className="mb-3 flex gap-1" aria-hidden>
+                        <span
+                          className={`h-6 flex-1 rounded-md border border-border ${
+                            f === "bothSides" ? "bg-[#383a3c]" : "bg-white"
+                          }`}
+                        />
+                        <span
+                          className={`h-6 flex-1 rounded-md border border-border ${
+                            f === "white" ? "bg-white" : "bg-[#383a3c]"
+                          }`}
+                        />
+                      </span>
+                      <span className="font-medium text-foreground">{FINISH_LABELS[f]}</span>
+                    </button>
+                  ))}
+                </div>
+              </Panel>
+
+              <Panel title="Glazing">
+                <div className="grid gap-2">
+                  {GLAZING_LIST.map((g) => (
+                    <label
+                      key={g.id}
+                      className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm transition-colors ${
+                        glazing === g.id ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/60"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="glazing"
+                        checked={glazing === g.id}
+                        onChange={() => setGlazing(g.id)}
+                        className="mt-0.5 size-4 accent-[var(--color-primary)]"
+                      />
+                      <span>
+                        <span className="font-medium text-foreground">{g.label}</span>
+                        <span className="mt-0.5 block text-xs text-muted-foreground">{g.description}</span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </Panel>
+
+              <Panel title="Which panel slides open?">
+                <div className="grid grid-cols-2 gap-3">
+                  {(["L", "R"] as ActiveSide[]).map((side) => (
+                    <button
+                      key={side}
+                      type="button"
+                      onClick={() => setActiveSide(side)}
+                      aria-pressed={activeSide === side}
+                      className={`rounded-xl border p-5 text-center transition-colors ${
+                        activeSide === side
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:bg-secondary/60"
+                      }`}
+                    >
+                      <span className="block text-3xl font-semibold text-foreground" aria-hidden>
+                        {side === "L" ? "←" : "→"}
+                      </span>
+                      <span className="mt-1 block text-sm font-medium text-foreground">
+                        {side === "L" ? "Left panel" : "Right panel"}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </Panel>
+
+              <Panel title="Options">
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {EXTRAS.map((e) => (
+                    <label
+                      key={e.id}
+                      className="flex cursor-pointer items-start gap-3 rounded-xl border border-border p-3 text-sm transition-colors hover:border-primary/40"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={extras.includes(e.id)}
+                        onChange={() =>
+                          setExtras((prev) =>
+                            prev.includes(e.id) ? prev.filter((x) => x !== e.id) : [...prev, e.id],
+                          )
+                        }
+                        className="mt-0.5 size-4 accent-[var(--color-primary)]"
+                      />
+                      <span className="min-w-0 flex-1">
+                        <span className="flex justify-between gap-3">
+                          <span className="font-medium text-foreground">{e.label}</span>
+                          <span className="font-semibold text-foreground">+{eur(e.price)}</span>
                         </span>
-                        <span className="text-lg font-semibold text-foreground">{side}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {side === "L" ? "Left panel slides" : "Right panel slides"}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+                        <span className="mt-0.5 block text-xs text-muted-foreground">{e.hint}</span>
+                      </span>
+                    </label>
+                  ))}
                 </div>
+              </Panel>
 
-                <div className="grid gap-4 sm:grid-cols-3">
-                  <Field
-                    label={`Width mm (${LIMITS.minWidth}–${LIMITS.maxWidth})`}
-                    value={width}
-                    onChange={setWidth}
-                    type="number"
+              <Panel title="Anything we should know?">
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  rows={3}
+                  placeholder="Floor level, existing opening, access, wishes…"
+                  className="input"
+                />
+              </Panel>
+            </div>
+
+            <aside className="grid gap-4 lg:sticky lg:top-20 lg:self-start">
+              <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  Your door
+                </h2>
+                <div className="mt-4">
+                  <DoorDrawing
+                    line={{
+                      id: "preview",
+                      system,
+                      width: w || 2000,
+                      height: h || 2000,
+                      qty,
+                      finish,
+                      glazing,
+                      activeSide,
+                      threshold: thresholdForWidth(w) ?? "t37",
+                    }}
                   />
-                  <Field
-                    label={`Height mm (${LIMITS.minHeight}–${LIMITS.maxHeight})`}
-                    value={height}
-                    onChange={setHeight}
-                    type="number"
-                  />
-                  <Field label="Quantity" value={qty} onChange={setQty} type="number" />
                 </div>
-                {sizeError && (
-                  <p
-                    role="alert"
-                    className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive"
-                  >
-                    {sizeError}
+                <dl className="mt-5 grid gap-1.5 text-sm">
+                  <Row label="System" value={SYSTEM_LABELS[system]} />
+                  <Row label="Size" value={`${w || "–"} × ${h || "–"} mm`} />
+                  <Row label="Colour" value={FINISH_LABELS[finish]} />
+                  <Row label="Quantity" value={`${qty} pc`} />
+                </dl>
+
+                {price.totalGross === null ? (
+                  <p className="mt-5 rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
+                    {price.unavailableReason ?? "Please check the measurements."}
+                  </p>
+                ) : (
+                  <>
+                    <p className="mt-5 text-3xl font-semibold tracking-tight text-foreground">
+                      {eur(price.totalGross * qty)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      incl. VAT, options included · fitting {eur(price.installationEstimate * qty)} and
+                      delivery {eur(price.deliveryEstimate)} estimated separately
+                    </p>
+                  </>
+                )}
+
+                <button
+                  type="button"
+                  disabled={!canAdd}
+                  onClick={() => add("cart")}
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Add to basket
+                  <ArrowRight className="size-4" aria-hidden />
+                </button>
+                <button
+                  type="button"
+                  disabled={!canAdd}
+                  onClick={() => add("more")}
+                  className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary disabled:opacity-50"
+                >
+                  <Plus className="size-4" aria-hidden />
+                  Add and configure another
+                </button>
+                {cart.length > 0 && (
+                  <p className="mt-3 text-center text-xs text-muted-foreground">
+                    {cart.length} product{cart.length > 1 ? "s" : ""} already in your basket
                   </p>
                 )}
-              </div>
-            )}
-
-            {step === 2 && (
-              <div className="grid gap-6">
-                <div>
-                  <p className="mb-2 text-sm font-semibold text-foreground">Colour</p>
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    {FINISH_OPTIONS.map((o) => (
-                      <button
-                        key={o.id}
-                        type="button"
-                        onClick={() => setFinish(o.id)}
-                        aria-pressed={finish === o.id}
-                        className={`rounded-xl border p-4 text-left transition-colors ${
-                          finish === o.id
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/40"
-                        }`}
-                      >
-                        <span
-                          className={`mb-3 block h-10 rounded-lg border border-border ${
-                            o.id === "white"
-                              ? "bg-white"
-                              : o.id === "oneSide"
-                                ? "bg-gradient-to-r from-white to-slate-700"
-                                : "bg-slate-700"
-                          }`}
-                          aria-hidden
-                        />
-                        <span className="block text-sm font-semibold text-foreground">
-                          {o.label}
-                        </span>
-                        <span className="mt-1 block text-xs text-muted-foreground">{o.hint}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="mb-2 text-sm font-semibold text-foreground">Glazing</p>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {GLAZING_LIST.map((g) => (
-                      <button
-                        key={g.id}
-                        type="button"
-                        onClick={() => setGlazing(g.id)}
-                        aria-pressed={glazing === g.id}
-                        className={`rounded-xl border p-4 text-left transition-colors ${
-                          glazing === g.id
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/40"
-                        }`}
-                      >
-                        <span className="block text-sm font-semibold text-foreground">
-                          {g.label}
-                        </span>
-                        <span className="mt-1 block text-xs text-muted-foreground">
-                          {g.description}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {step === 3 && (
-              <div className="grid gap-5">
-                <Toggle
-                  label="I need delivery"
-                  hint="Delivered to your address, priced separately."
-                  checked={delivery}
-                  onChange={setDelivery}
-                />
-                <Toggle
-                  label="I need installation"
-                  hint="Fitted by our own team, priced separately."
-                  checked={installation}
-                  onChange={setInstallation}
-                />
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-foreground">
-                    Anything we should know? (optional)
-                  </label>
-                  <textarea
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    rows={4}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
-                    placeholder="Building stage, deadline, access to the opening…"
-                  />
-                </div>
-              </div>
-            )}
-
-            <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-6">
-              {step > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setStep(step - 1)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
-                >
-                  <ArrowLeft className="size-4" aria-hidden />
-                  Back
-                </button>
-              )}
-              {step < STEPS.length - 1 ? (
-                <button
-                  type="button"
-                  disabled={!canContinue}
-                  onClick={() => setStep(step + 1)}
-                  className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Continue
-                  <ArrowRight className="size-4" aria-hidden />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={submit}
-                  className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/90"
-                >
-                  Get my offer
-                  <ArrowRight className="size-4" aria-hidden />
-                </button>
-              )}
-            </div>
-          </section>
-
-          {/* live preview */}
-          <aside className="lg:sticky lg:top-20 lg:self-start">
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Your door
-              </h2>
-              <DoorDrawing line={line} className="mt-4 w-full" />
-              <dl className="mt-5 space-y-2 text-sm">
-                <PreviewRow label="Size" value={`${line.width} × ${line.height} mm`} />
-                <PreviewRow label="Quantity" value={`${q} pc${q > 1 ? "s" : ""}`} />
-                <PreviewRow label="Opens" value={activeSide === "L" ? "Left panel" : "Right panel"} />
-                <PreviewRow label="Colour" value={FINISH_LABELS[finish]} />
-                <PreviewRow
-                  label="Glazing"
-                  value={GLAZING_LIST.find((g) => g.id === glazing)?.label ?? ""}
-                />
-                <PreviewRow
-                  label="Extras"
-                  value={
-                    [delivery && "delivery", installation && "installation"]
-                      .filter(Boolean)
-                      .join(", ") || "none"
-                  }
-                />
-              </dl>
-              <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
-                The drawing is indicative. Final dimensions are confirmed by measurement before
-                production.
-              </p>
-            </div>
-          </aside>
+              </section>
+            </aside>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
 
-function Field({
-  label,
-  value,
-  onChange,
-  type = "text",
-  placeholder,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  type?: string;
-  placeholder?: string;
-}) {
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div>
-      <label className="mb-1.5 block text-sm font-semibold text-foreground">{label}</label>
-      <input
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-primary"
-      />
-    </div>
+    <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        {title}
+      </h2>
+      {children}
+    </section>
   );
 }
 
-function Toggle({
-  label,
-  hint,
-  checked,
-  onChange,
-}: {
-  label: string;
-  hint: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="flex cursor-pointer items-start justify-between gap-4 rounded-xl border border-border p-4">
-      <span>
-        <span className="block text-sm font-semibold text-foreground">{label}</span>
-        <span className="mt-1 block text-xs text-muted-foreground">{hint}</span>
-      </span>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="mt-1 size-5 shrink-0 accent-[var(--color-primary)]"
-      />
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-medium text-muted-foreground">{label}</span>
+      {children}
     </label>
   );
 }
 
-function PreviewRow({ label, value }: { label: string; value: string }) {
+function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-border pb-1.5">
+    <div className="flex items-baseline justify-between gap-3">
       <dt className="text-muted-foreground">{label}</dt>
       <dd className="text-right font-medium text-foreground">{value}</dd>
     </div>

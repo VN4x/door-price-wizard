@@ -380,8 +380,8 @@ export interface QuoteInput {
   finish: Finish;
   /** Markup percentage, e.g. 25 for +25 %. */
   markupPercent: number;
-  /** HST threshold rail; ignored for Slide. */
-  threshold: ThresholdId;
+  /** HST threshold rail; ignored for Slide. Derived from the width when omitted. */
+  threshold?: ThresholdId | undefined;
 }
 
 export interface QuoteLine extends CostLine {
@@ -392,6 +392,8 @@ export interface QuoteLine extends CostLine {
 
 export interface Quote {
   system: SystemId;
+  /** False when HST is wider than the longest threshold rail. */
+  thresholdAvailable: boolean;
   lines: QuoteLine[];
   groups: { group: CostGroup; label: string; total: number }[];
   materials: number;
@@ -428,6 +430,18 @@ export function suggestThreshold(widthMm: number): ThresholdId {
   return "t37";
 }
 
+/**
+ * The threshold rail comes in three delivered lengths and the whole rail is
+ * charged. Openings wider than the longest rail cannot be priced automatically.
+ */
+export function thresholdForWidth(widthMm: number): ThresholdId | null {
+  if (!Number.isFinite(widthMm)) return null;
+  if (widthMm <= 2500) return "t25";
+  if (widthMm <= 3000) return "t30";
+  if (widthMm <= 3700) return "t37";
+  return null;
+}
+
 export function validateSize(widthMm: number, heightMm: number): string | null {
   if (!Number.isFinite(widthMm) || !Number.isFinite(heightMm)) return "Enter both dimensions.";
   if (widthMm < LIMITS.minWidth || widthMm > LIMITS.maxWidth)
@@ -450,7 +464,9 @@ export function calculateQuote(system: SystemId, input: QuoteInput): Quote {
   });
 
   const materials = lines.reduce((sum, l) => sum + l.total, 0);
-  const threshold = system === "hst" ? THRESHOLDS[input.threshold].price : 0;
+  const railId = input.threshold ?? thresholdForWidth(input.width);
+  const thresholdAvailable = system === "slide" || railId !== null;
+  const threshold = system === "hst" && railId ? THRESHOLDS[railId].price : 0;
   const labour = LABOUR[system];
   const cost = materials + threshold + labour;
   const markup = cost * (input.markupPercent / 100);
@@ -475,6 +491,7 @@ export function calculateQuote(system: SystemId, input: QuoteInput): Quote {
 
   return {
     system,
+    thresholdAvailable,
     lines,
     groups,
     materials,

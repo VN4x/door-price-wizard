@@ -6,6 +6,11 @@ export type ActiveSide = "L" | "R";
 
 export type GlazingId = "std2" | "warm3" | "sound35" | "safety";
 
+export type ExtraId = "lock" | "warranty" | "safetyGlass" | "solarGlass" | "gasket";
+
+/** Widened now so other window types can join the cart later without a rewrite. */
+export type ProductKind = "slidingDoor" | "outletItem";
+
 export interface GlazingPackage {
   id: GlazingId;
   label: string;
@@ -24,6 +29,54 @@ export interface DoorLine {
   glazing: GlazingId;
   activeSide: ActiveSide;
   threshold: ThresholdId;
+  extras?: ExtraId[] | undefined;
+}
+
+export interface CartItem {
+  id: string;
+  kind: ProductKind;
+  line: DoorLine;
+  note?: string | undefined;
+  /** Set for stock items taken from the Outlet. */
+  outletId?: string | undefined;
+  /** Fixed customer price for stock items, EUR incl. VAT. */
+  fixedGross?: number | undefined;
+}
+
+export interface CustomerDetails {
+  name: string;
+  email: string;
+  phone?: string | undefined;
+  address?: string | undefined;
+  note?: string | undefined;
+  needsDelivery: boolean;
+  needsInstallation: boolean;
+  /** Remember these details in this browser for the next visit. */
+  remember: boolean;
+}
+
+export interface OutletItem {
+  id: string;
+  name: string;
+  system: SystemId;
+  width: number;
+  height: number;
+  finish: Finish;
+  glazing: GlazingId;
+  activeSide: ActiveSide;
+  /** Customer price incl. VAT. */
+  gross: number;
+  stock: number;
+  reason: string;
+}
+
+/** What the price page carries into the enquiry form. */
+export interface PendingConfig {
+  system: SystemId;
+  width: number;
+  height: number;
+  finish: Finish;
+  extras: ExtraId[];
 }
 
 export type EnquiryStatus = "new" | "quoted" | "closed";
@@ -46,6 +99,8 @@ export type OfferStatus = "draft" | "sent" | "accepted" | "declined";
 
 export interface Offer {
   id: string;
+  /** Long random string used in the customer's private offer link. */
+  token: string;
   number: string;
   version: number;
   enquiryId: string;
@@ -63,6 +118,8 @@ export interface Offer {
   validUntil: string;
   viewedAt?: string | undefined;
   sentAt?: string | undefined;
+  /** Set when the offer was emailed automatically on cart submit. */
+  autoSentAt?: string | undefined;
 }
 
 export type OrderStatus =
@@ -84,6 +141,15 @@ export interface Order {
   glassOrderedAt?: string | undefined;
 }
 
+/** How much of an article one door uses. */
+export type PriceDriver =
+  | "framePerimeter"
+  | "sashPerimeter"
+  | "mullionHeight"
+  | "width"
+  | "glassArea"
+  | "fixed";
+
 export interface PriceItem {
   id: string;
   name: string;
@@ -93,4 +159,19 @@ export interface PriceItem {
   saleMultiplier: number;
   active: boolean;
   updatedAt: string;
+  /** How the quantity is counted for one door. */
+  driver: PriceDriver;
+  /** Quantity used at the reference door 3500 x 2178 mm. */
+  refQty: number;
+  /** Which profile systems use this article. */
+  systems: SystemId[];
+  /** Optional different purchase price for HST. */
+  hstPrice?: number | undefined;
+}
+
+export interface CallbackRequest {
+  id: string;
+  name: string;
+  phone: string;
+  createdAt: string;
 }

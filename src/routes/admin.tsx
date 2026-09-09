@@ -12,6 +12,7 @@ import {
   Tags,
   Users,
 } from "lucide-react";
+import { DemoBar } from "@/components/DemoBar";
 import { useStore } from "@/mock/store";
 
 export const Route = createFileRoute("/admin")({
@@ -47,6 +48,8 @@ function AdminLayout() {
   const newCount = enquiries.filter((e) => e.status === "new").length;
 
   return (
+    <>
+      <DemoBar />
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
       <aside className="border-b border-border bg-sidebar lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r print:hidden">
         <div className="px-5 py-5">
@@ -131,5 +134,6 @@ function AdminLayout() {
         </main>
       </div>
     </div>
+    </>
   );
 }

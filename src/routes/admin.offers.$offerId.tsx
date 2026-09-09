@@ -219,8 +219,8 @@ function OfferEditor() {
               What the customer sees
             </h2>
             <Link
-              to="/offer/$offerId"
-              params={{ offerId: offer.id }}
+              to="/offer/$token"
+              params={{ token: offer.token }}
               className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
             >
               Open

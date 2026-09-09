@@ -4,7 +4,8 @@ import { Lock, Plus, X } from "lucide-react";
 import { StatusChip } from "@/components/StatusChip";
 import { eur } from "@/lib/pricing";
 import { useStore, today } from "@/mock/store";
-import type { PriceItem } from "@/types";
+import type { PriceDriver, PriceItem } from "@/types";
+import type { SystemId } from "@/lib/pricing";
 
 export const Route = createFileRoute("/admin/price-list")({
   head: () => ({
@@ -26,7 +27,24 @@ const EMPTY: PriceItem = {
   saleMultiplier: 1.4,
   active: true,
   updatedAt: today(),
+  driver: "fixed",
+  refQty: 1,
+  systems: ["slide", "hst"],
 };
+
+const DRIVER_LABELS: Record<PriceDriver, string> = {
+  framePerimeter: "Frame perimeter (m)",
+  sashPerimeter: "Sash perimeter (m)",
+  mullionHeight: "Mullion height (m)",
+  width: "Door width (m)",
+  glassArea: "Glass area (m²)",
+  fixed: "Fixed per door",
+};
+
+const SYSTEM_OPTIONS: { id: SystemId; label: string }[] = [
+  { id: "slide", label: "Slide" },
+  { id: "hst", label: "HST" },
+];
 
 function PriceList() {
   const { priceItems, upsertPriceItem, deletePriceItem, role } = useStore();
@@ -87,12 +105,14 @@ function PriceList() {
       />
 
       <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-sm">
-        <table className="w-full min-w-[860px] text-sm">
+        <table className="w-full min-w-[1040px] text-sm">
           <thead className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
               <th className="px-5 py-3 font-medium">Article</th>
               <th className="px-5 py-3 font-medium">Category</th>
               <th className="px-5 py-3 font-medium">Unit</th>
+              <th className="px-5 py-3 font-medium">Counted by</th>
+              <th className="px-5 py-3 font-medium">Systems</th>
               <th className="px-5 py-3 text-right font-medium">Purchase</th>
               <th className="px-5 py-3 text-right font-medium">Multiplier</th>
               <th className="px-5 py-3 text-right font-medium">Sale</th>
@@ -107,6 +127,10 @@ function PriceList() {
                 <td className="px-5 py-3 font-medium text-foreground">{p.name}</td>
                 <td className="px-5 py-3 text-muted-foreground">{p.category}</td>
                 <td className="px-5 py-3 text-muted-foreground">{p.unit}</td>
+                <td className="px-5 py-3 text-muted-foreground">{DRIVER_LABELS[p.driver]}</td>
+                <td className="px-5 py-3 text-muted-foreground">
+                  {p.systems.map((sys) => (sys === "hst" ? "HST" : "Slide")).join(" + ")}
+                </td>
                 <td className="px-5 py-3 text-right tabular-nums text-foreground">
                   {eur(p.purchasePrice)}
                 </td>
@@ -183,6 +207,65 @@ function PriceList() {
                 value={String(draft.saleMultiplier)}
                 onChange={(v) => setDraft({ ...draft, saleMultiplier: Number(v) || 1 })}
               />
+              <div>
+                <label
+                  htmlFor="driver"
+                  className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                >
+                  How the quantity is counted
+                </label>
+                <select
+                  id="driver"
+                  value={draft.driver}
+                  onChange={(e) => setDraft({ ...draft, driver: e.target.value as PriceDriver })}
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
+                >
+                  {Object.entries(DRIVER_LABELS).map(([id, label]) => (
+                    <option key={id} value={id}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Field
+                label="Quantity at reference door 3500 × 2178 mm"
+                type="number"
+                value={String(draft.refQty)}
+                onChange={(v) => setDraft({ ...draft, refQty: Number(v) || 0 })}
+              />
+              <fieldset>
+                <legend className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Used in systems
+                </legend>
+                <div className="flex gap-2">
+                  {SYSTEM_OPTIONS.map((sys) => {
+                    const on = draft.systems.includes(sys.id);
+                    return (
+                      <label
+                        key={sys.id}
+                        className={`flex flex-1 cursor-pointer items-center gap-2 rounded-xl border p-3 text-sm ${
+                          on ? "border-primary bg-primary/5" : "border-border"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={on}
+                          onChange={() =>
+                            setDraft({
+                              ...draft,
+                              systems: on
+                                ? draft.systems.filter((x) => x !== sys.id)
+                                : [...draft.systems, sys.id],
+                            })
+                          }
+                          className="size-4 accent-[var(--color-primary)]"
+                        />
+                        <span className="font-medium text-foreground">{sys.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
               <label className="flex items-center justify-between gap-4 rounded-xl border border-border p-4 text-sm">
                 <span className="font-medium text-foreground">Active</span>
                 <input
