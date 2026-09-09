@@ -4,7 +4,16 @@ export type Role = "customer" | "sales" | "admin";
 
 export type ActiveSide = "L" | "R";
 
-export type GlazingId = "std2" | "warm3" | "sound35" | "safety";
+export type GlazingId = "std3" | "tinted3" | "quiet36" | "quiet40";
+
+/** Glass upgrades priced per square metre of door area. */
+export type GlassAddonId =
+  | "warmSpacer"
+  | "safetyOutside"
+  | "safetyInside"
+  | "solar039"
+  | "solar035"
+  | "solar029";
 
 export type ExtraId = "lock" | "warranty" | "safetyGlass" | "solarGlass" | "gasket";
 
@@ -27,6 +36,7 @@ export interface DoorLine {
   qty: number;
   finish: Finish;
   glazing: GlazingId;
+  glassAddons?: GlassAddonId[] | undefined;
   activeSide: ActiveSide;
   threshold: ThresholdId;
   extras?: ExtraId[] | undefined;
@@ -45,6 +55,8 @@ export interface CartItem {
 
 export interface CustomerDetails {
   name: string;
+  /** A returning customer keeps a small profile in this browser. */
+  hasAccount?: boolean | undefined;
   email: string;
   phone?: string | undefined;
   address?: string | undefined;
@@ -77,6 +89,8 @@ export interface PendingConfig {
   height: number;
   finish: Finish;
   extras: ExtraId[];
+  glazing?: GlazingId | undefined;
+  glassAddons?: GlassAddonId[] | undefined;
 }
 
 export type EnquiryStatus = "new" | "quoted" | "closed";
@@ -111,6 +125,9 @@ export interface Offer {
   markupPercent: number;
   /** Manual override of the product net total, EUR excl. VAT. */
   priceOverride: number | null;
+  /** Discount on the product total, percent. */
+  discountPercent?: number | undefined;
+  discountReason?: string | undefined;
   deliveryPrice: number;
   installationPrice: number;
   status: OfferStatus;

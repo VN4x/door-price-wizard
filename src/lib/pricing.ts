@@ -9,7 +9,7 @@
 
 export type SystemId = "slide" | "hst";
 export type Finish = "white" | "oneSide" | "bothSides";
-export type ThresholdId = "t25" | "t30" | "t37";
+export type ThresholdId = "t25" | "t30" | "t37" | "tXL";
 
 export type Driver =
   | "framePerimeter"
@@ -90,6 +90,7 @@ export const THRESHOLDS: Record<ThresholdId, { label: string; lengthM: number; p
   t25: { label: "2.5 m", lengthM: 2.5, price: 600 },
   t30: { label: "3.0 m", lengthM: 3.0, price: 750 },
   t37: { label: "3.7 m", lengthM: 3.7, price: 900 },
+  tXL: { label: "Over 3.7 m, special rail", lengthM: 4.5, price: 1359 },
 };
 
 export const LABOUR: Record<SystemId, number> = { slide: 400, hst: 600 };
@@ -431,15 +432,15 @@ export function suggestThreshold(widthMm: number): ThresholdId {
 }
 
 /**
- * The threshold rail comes in three delivered lengths and the whole rail is
- * charged. Openings wider than the longest rail cannot be priced automatically.
+ * The threshold rail comes in delivered lengths and the whole rail is charged.
+ * Above 3.7 m a special rail is used.
  */
 export function thresholdForWidth(widthMm: number): ThresholdId | null {
   if (!Number.isFinite(widthMm)) return null;
   if (widthMm <= 2500) return "t25";
   if (widthMm <= 3000) return "t30";
   if (widthMm <= 3700) return "t37";
-  return null;
+  return "tXL";
 }
 
 export function validateSize(widthMm: number, heightMm: number): string | null {
