@@ -124,8 +124,8 @@ export function glassSurcharge(
 /** Only one solar option may be selected; picking another replaces it. */
 export function toggleGlassAddon(current: GlassAddonId[], id: GlassAddonId): GlassAddonId[] {
   if (current.includes(id)) return current.filter((a) => a !== id);
-  const group = GLASS_ADDONS[id].group;
-  const kept = group ? current.filter((a) => GLASS_ADDONS[a].group !== group) : current;
+  const group = GLASS_ADDONS[id]?.group;
+  const kept = group ? current.filter((a) => GLASS_ADDONS[a]?.group !== group) : current;
   return [...kept, id];
 }
 
