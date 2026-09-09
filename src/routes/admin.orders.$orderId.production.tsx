@@ -192,7 +192,10 @@ function ProductionOrder() {
               <dl className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-3">
                 <Spec label="Colour" value={FINISH_LABELS[line.finish]} />
                 <Spec label="Glazing" value={GLAZING_PACKAGES[line.glazing].label} />
-                <Spec label="Hardware" value="Siegenia HST" />
+                <Spec
+                  label="Hardware"
+                  value={line.system === "hst" ? "Siegenia HST" : "Siegenia Slide"}
+                />
               </dl>
 
               <h2 className="mt-6 text-lg font-bold uppercase tracking-wider text-foreground">
