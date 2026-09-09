@@ -432,8 +432,8 @@ export function suggestThreshold(widthMm: number): ThresholdId {
 }
 
 /**
- * The threshold rail comes in three delivered lengths and the whole rail is
- * charged. Openings wider than the longest rail cannot be priced automatically.
+ * The threshold rail comes in delivered lengths and the whole rail is charged.
+ * Above 3.7 m a special rail is used.
  */
 export function thresholdForWidth(widthMm: number): ThresholdId | null {
   if (!Number.isFinite(widthMm)) return null;

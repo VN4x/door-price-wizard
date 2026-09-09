@@ -1,5 +1,5 @@
 import { calculateQuote, VAT_RATE, type Quote } from "@/lib/pricing";
-import { GLAZING_PACKAGES } from "@/lib/glass";
+import { glassPerM2 } from "@/lib/glass";
 import type { DoorLine, Offer, Role } from "@/types";
 
 export interface LinePricing {
@@ -18,6 +18,9 @@ export interface OfferPricing {
   productNet: number;
   /** Product net price before the manual override. */
   calculatedNet: number;
+  /** Discount applied to the product total. */
+  discountPercent: number;
+  discountEur: number;
   deliveryPrice: number;
   installationPrice: number;
   netTotal: number;
@@ -41,7 +44,7 @@ export function priceLine(line: DoorLine, markupPercent: number): LinePricing {
     threshold: line.threshold,
   });
   const areaM2 = (line.width * line.height) / 1_000_000;
-  const glazingUplift = GLAZING_PACKAGES[line.glazing].upliftPerM2 * areaM2;
+  const glazingUplift = glassPerM2(line.glazing, line.glassAddons ?? []) * areaM2;
   const cost = (quote.cost + glazingUplift) * line.qty;
   const net = (quote.netPrice + glazingUplift * (1 + markupPercent / 100)) * line.qty;
   return { line, quote, glazingUplift, cost, net };
@@ -50,7 +53,10 @@ export function priceLine(line: DoorLine, markupPercent: number): LinePricing {
 export function priceOffer(offer: Offer): OfferPricing {
   const lines = offer.lines.map((l) => priceLine(l, offer.markupPercent));
   const calculatedNet = lines.reduce((s, l) => s + l.net, 0);
-  const productNet = offer.priceOverride ?? calculatedNet;
+  const beforeDiscount = offer.priceOverride ?? calculatedNet;
+  const discountPercent = offer.discountPercent ?? 0;
+  const discountEur = (beforeDiscount * discountPercent) / 100;
+  const productNet = beforeDiscount - discountEur;
   const netTotal = productNet + offer.deliveryPrice + offer.installationPrice;
   const vat = netTotal * VAT_RATE;
   const cost = lines.reduce((s, l) => s + l.cost, 0);
@@ -59,6 +65,8 @@ export function priceOffer(offer: Offer): OfferPricing {
     lines,
     productNet,
     calculatedNet,
+    discountPercent,
+    discountEur,
     deliveryPrice: offer.deliveryPrice,
     installationPrice: offer.installationPrice,
     netTotal,
@@ -73,6 +81,8 @@ export function priceOffer(offer: Offer): OfferPricing {
 /** Everything a customer may see — no cost or margin fields exist on this object. */
 export interface CustomerPricing {
   productNet: number;
+  discountPercent: number;
+  discountEur: number;
   deliveryPrice: number;
   installationPrice: number;
   netTotal: number;
@@ -84,6 +94,8 @@ export function customerPricing(offer: Offer): CustomerPricing {
   const p = priceOffer(offer);
   return {
     productNet: p.productNet,
+    discountPercent: p.discountPercent,
+    discountEur: p.discountEur,
     deliveryPrice: p.deliveryPrice,
     installationPrice: p.installationPrice,
     netTotal: p.netTotal,

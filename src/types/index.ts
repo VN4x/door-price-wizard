@@ -125,6 +125,9 @@ export interface Offer {
   markupPercent: number;
   /** Manual override of the product net total, EUR excl. VAT. */
   priceOverride: number | null;
+  /** Discount on the product total, percent. */
+  discountPercent?: number | undefined;
+  discountReason?: string | undefined;
   deliveryPrice: number;
   installationPrice: number;
   status: OfferStatus;
