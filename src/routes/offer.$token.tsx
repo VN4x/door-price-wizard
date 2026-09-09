@@ -7,7 +7,7 @@ import { customerPricing } from "@/lib/offer";
 import { FINISH_LABELS, VAT_RATE, eur } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
 
-export const Route = createFileRoute("/offer/$offerId")({
+export const Route = createFileRoute("/offer/$token")({
   head: () => ({
     meta: [
       { title: "Your sliding door offer | Kvaliteetaken" },
