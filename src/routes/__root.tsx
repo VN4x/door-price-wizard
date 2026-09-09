@@ -12,7 +12,6 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { MockStoreProvider } from "../mock/store";
-import { DemoBar } from "../components/DemoBar";
 
 function NotFoundComponent() {
   return (
@@ -128,7 +127,6 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <MockStoreProvider>
-        <DemoBar />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
       </MockStoreProvider>

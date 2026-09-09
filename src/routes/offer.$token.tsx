@@ -7,7 +7,7 @@ import { customerPricing } from "@/lib/offer";
 import { FINISH_LABELS, VAT_RATE, eur } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
 
-export const Route = createFileRoute("/offer/$offerId")({
+export const Route = createFileRoute("/offer/$token")({
   head: () => ({
     meta: [
       { title: "Your sliding door offer | Kvaliteetaken" },
@@ -30,9 +30,9 @@ export const Route = createFileRoute("/offer/$offerId")({
 });
 
 function OfferPage() {
-  const { offerId } = Route.useParams();
+  const { token } = Route.useParams();
   const { offers, updateOffer } = useStore();
-  const offer = offers.find((o) => o.id === offerId);
+  const offer = offers.find((o) => o.token === token);
   if (!offer) throw notFound();
 
   const price = customerPricing(offer);

@@ -10,21 +10,28 @@ const ROLES: { id: Role; label: string }[] = [
 
 /** Demo-only helper: switch the viewing role to see exactly what each person sees. */
 export function DemoBar() {
-  const { role, setRole } = useStore();
+  const { role, setRole, offers } = useStore();
+  const sample = offers[0];
   return (
     <div className="print:hidden sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2 text-xs sm:px-6">
         <span className="font-semibold tracking-tight text-foreground">Kvaliteetaken</span>
         <nav className="flex flex-wrap items-center gap-4 text-muted-foreground">
           <Link to="/" className="hover:text-foreground">
-            Home
+            Public site
           </Link>
           <Link to="/enquiry" className="hover:text-foreground">
-            Enquiry form
+            Configurator
           </Link>
-          <Link to="/offer/$offerId" params={{ offerId: "off-1" }} className="hover:text-foreground">
-            Sample offer
-          </Link>
+          {sample && (
+            <Link
+              to="/offer/$token"
+              params={{ token: sample.token }}
+              className="hover:text-foreground"
+            >
+              Sample offer
+            </Link>
+          )}
           <Link to="/admin" className="hover:text-foreground">
             Admin
           </Link>

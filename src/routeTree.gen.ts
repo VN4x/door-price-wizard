@@ -11,13 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CartRouteImport } from './routes/cart'
+import { Route as OutletRouteImport } from './routes/outlet'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCalculatorRouteImport } from './routes/admin.calculator'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin.enquiries'
 import { Route as AdminPriceListRouteImport } from './routes/admin.price-list'
 import { Route as EnquiryIndexRouteImport } from './routes/enquiry.index'
 import { Route as EnquirySentRouteImport } from './routes/enquiry.sent'
-import { Route as OfferOfferIdRouteImport } from './routes/offer.$offerId'
+import { Route as OfferTokenRouteImport } from './routes/offer.$token'
 import { Route as AdminOffersIndexRouteImport } from './routes/admin.offers.index'
 import { Route as AdminOffersOfferIdRouteImport } from './routes/admin.offers.$offerId'
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin.orders.index'
@@ -32,6 +34,16 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OutletRoute = OutletRouteImport.update({
+  id: '/outlet',
+  path: '/outlet',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -64,9 +76,9 @@ const EnquirySentRoute = EnquirySentRouteImport.update({
   path: '/enquiry/sent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OfferOfferIdRoute = OfferOfferIdRouteImport.update({
-  id: '/offer/$offerId',
-  path: '/offer/$offerId',
+const OfferTokenRoute = OfferTokenRouteImport.update({
+  id: '/offer/$token',
+  path: '/offer/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminOffersIndexRoute = AdminOffersIndexRouteImport.update({
@@ -99,11 +111,13 @@ const AdminOrdersOrderIdProductionRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/cart': typeof CartRoute
+  '/outlet': typeof OutletRoute
   '/admin/calculator': typeof AdminCalculatorRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/price-list': typeof AdminPriceListRoute
   '/enquiry/sent': typeof EnquirySentRoute
-  '/offer/$offerId': typeof OfferOfferIdRoute
+  '/offer/$token': typeof OfferTokenRoute
   '/admin/': typeof AdminIndexRoute
   '/enquiry/': typeof EnquiryIndexRoute
   '/admin/offers/$offerId': typeof AdminOffersOfferIdRoute
@@ -114,11 +128,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cart': typeof CartRoute
+  '/outlet': typeof OutletRoute
   '/admin/calculator': typeof AdminCalculatorRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/price-list': typeof AdminPriceListRoute
   '/enquiry/sent': typeof EnquirySentRoute
-  '/offer/$offerId': typeof OfferOfferIdRoute
+  '/offer/$token': typeof OfferTokenRoute
   '/admin': typeof AdminIndexRoute
   '/enquiry': typeof EnquiryIndexRoute
   '/admin/offers/$offerId': typeof AdminOffersOfferIdRoute
@@ -131,11 +147,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/cart': typeof CartRoute
+  '/outlet': typeof OutletRoute
   '/admin/calculator': typeof AdminCalculatorRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/price-list': typeof AdminPriceListRoute
   '/enquiry/sent': typeof EnquirySentRoute
-  '/offer/$offerId': typeof OfferOfferIdRoute
+  '/offer/$token': typeof OfferTokenRoute
   '/admin/': typeof AdminIndexRoute
   '/enquiry/': typeof EnquiryIndexRoute
   '/admin/offers/$offerId': typeof AdminOffersOfferIdRoute
@@ -149,11 +167,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/cart'
+    | '/outlet'
     | '/admin/calculator'
     | '/admin/enquiries'
     | '/admin/price-list'
     | '/enquiry/sent'
-    | '/offer/$offerId'
+    | '/offer/$token'
     | '/admin/'
     | '/enquiry/'
     | '/admin/offers/$offerId'
@@ -164,11 +184,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cart'
+    | '/outlet'
     | '/admin/calculator'
     | '/admin/enquiries'
     | '/admin/price-list'
     | '/enquiry/sent'
-    | '/offer/$offerId'
+    | '/offer/$token'
     | '/admin'
     | '/enquiry'
     | '/admin/offers/$offerId'
@@ -180,11 +202,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/cart'
+    | '/outlet'
     | '/admin/calculator'
     | '/admin/enquiries'
     | '/admin/price-list'
     | '/enquiry/sent'
-    | '/offer/$offerId'
+    | '/offer/$token'
     | '/admin/'
     | '/enquiry/'
     | '/admin/offers/$offerId'
@@ -197,8 +221,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  CartRoute: typeof CartRoute
+  OutletRoute: typeof OutletRoute
   EnquirySentRoute: typeof EnquirySentRoute
-  OfferOfferIdRoute: typeof OfferOfferIdRoute
+  OfferTokenRoute: typeof OfferTokenRoute
   EnquiryIndexRoute: typeof EnquiryIndexRoute
 }
 
@@ -216,6 +242,20 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/outlet': {
+      id: '/outlet'
+      path: '/outlet'
+      fullPath: '/outlet'
+      preLoaderRoute: typeof OutletRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -260,11 +300,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EnquirySentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/offer/$offerId': {
-      id: '/offer/$offerId'
-      path: '/offer/$offerId'
-      fullPath: '/offer/$offerId'
-      preLoaderRoute: typeof OfferOfferIdRouteImport
+    '/offer/$token': {
+      id: '/offer/$token'
+      path: '/offer/$token'
+      fullPath: '/offer/$token'
+      preLoaderRoute: typeof OfferTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/offers/': {
@@ -334,8 +374,10 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  CartRoute: CartRoute,
+  OutletRoute: OutletRoute,
   EnquirySentRoute: EnquirySentRoute,
-  OfferOfferIdRoute: OfferOfferIdRoute,
+  OfferTokenRoute: OfferTokenRoute,
   EnquiryIndexRoute: EnquiryIndexRoute,
 }
 export const routeTree = rootRouteImport
