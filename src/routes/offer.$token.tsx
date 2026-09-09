@@ -30,9 +30,9 @@ export const Route = createFileRoute("/offer/$token")({
 });
 
 function OfferPage() {
-  const { offerId } = Route.useParams();
+  const { token } = Route.useParams();
   const { offers, updateOffer } = useStore();
-  const offer = offers.find((o) => o.id === offerId);
+  const offer = offers.find((o) => o.token === token);
   if (!offer) throw notFound();
 
   const price = customerPricing(offer);
