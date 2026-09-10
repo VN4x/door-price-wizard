@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Send, Trash2 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { extrasLabels } from "@/lib/extras";
-import { GLAZING_PACKAGES } from "@/lib/glass";
+import { GLASS_ADDONS, GLAZING_PACKAGES } from "@/lib/glass";
 import { deliveryEstimate, installationEstimate, publicPrice } from "@/lib/public-price";
 import { FINISH_LABELS, SYSTEM_LABELS, eur } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
@@ -131,6 +131,11 @@ function CartPage() {
                             {GLAZING_PACKAGES[item.line.glazing].label} · opens{" "}
                             {item.line.activeSide === "L" ? "left" : "right"}
                           </p>
+                          {(item.line.glassAddons ?? []).length > 0 && (
+                            <p className="mt-1 text-sm text-muted-foreground">
+                              Glass upgrades: {glassAddonLabels(item.line.glassAddons ?? []).join(", ")}
+                            </p>
+                          )}
                           {labels.length > 0 && (
                             <p className="mt-1 text-sm text-muted-foreground">
                               Options: {labels.join(", ")}
