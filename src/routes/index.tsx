@@ -67,7 +67,7 @@ function PricePage() {
 
   const wantIt = (system: SystemId) => {
     setPending({ system, width, height, finish, extras });
-    navigate({ to: "/enquiry" }).catch((err) => console.error("nav", err));
+    navigate({ to: "/enquiry" }).catch(() => {});
   };
 
   return (

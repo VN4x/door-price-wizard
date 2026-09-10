@@ -44,9 +44,11 @@ export function priceLine(line: DoorLine, markupPercent: number): LinePricing {
     threshold: line.threshold,
   });
   const areaM2 = (line.width * line.height) / 1_000_000;
-  const glazingUplift = glassPerM2(line.glazing, line.glassAddons ?? []) * areaM2;
-  const cost = (quote.cost + glazingUplift) * line.qty;
-  const net = (quote.netPrice + glazingUplift * (1 + markupPercent / 100)) * line.qty;
+  // Glass package and upgrade prices are quoted to customers incl. VAT, so convert
+  // to net here before mixing them with the net product price.
+  const glazingUplift = (glassPerM2(line.glazing, line.glassAddons ?? []) * areaM2) / (1 + VAT_RATE);
+  const cost = (quote.cost + glazingUplift / (1 + markupPercent / 100)) * line.qty;
+  const net = (quote.netPrice + glazingUplift) * line.qty;
   return { line, quote, glazingUplift, cost, net };
 }
 

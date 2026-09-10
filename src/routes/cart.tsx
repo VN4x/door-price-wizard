@@ -38,6 +38,8 @@ function itemGross(item: CartItem): number | null {
     height: item.line.height,
     finish: item.line.finish,
     extras: item.line.extras ?? [],
+    glazing: item.line.glazing,
+    glassAddons: item.line.glassAddons ?? [],
   });
   return p.totalGross === null ? null : p.totalGross * item.line.qty;
 }
