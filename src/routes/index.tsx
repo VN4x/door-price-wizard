@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowRight, Ruler, ShieldCheck, Timer } from "lucide-react";
 import { CallbackBox } from "@/components/CallbackBox";
+import { Link } from "@tanstack/react-router";
+import { useI18n } from "@/lib/i18n";
 import { SiteHeader } from "@/components/SiteHeader";
 import { EXTRAS } from "@/lib/extras";
 import { publicPrice } from "@/lib/public-price";
@@ -40,6 +42,7 @@ const SYSTEMS: SystemId[] = ["slide", "hst"];
 
 function PricePage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { setPending } = useStore();
   const [widthText, setWidthText] = useState("2000");
   const [heightText, setHeightText] = useState("2000");
@@ -77,15 +80,20 @@ function PricePage() {
         <section className="border-b border-border bg-card">
           <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-              Rehau Synego Slide &amp; HST · Siegenia hardware
+              {t("home.eyebrow")}
             </p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Your sliding door price, right now
+              {t("home.title")}
             </h1>
             <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground">
-              Enter your opening. Both systems are priced side by side, including VAT, with fitting
-              and delivery estimated separately.
+              {t("home.lead")}
             </p>
+            <Link
+              to="/differences"
+              className="mt-4 inline-block text-sm font-semibold text-accent underline-offset-4 hover:underline"
+            >
+              {t("diff.link")}
+            </Link>
           </div>
         </section>
 
@@ -93,19 +101,19 @@ function PricePage() {
           <aside className="grid gap-6 lg:sticky lg:top-20 lg:self-start">
             <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Your opening
+                {t("home.opening")}
               </h2>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <NumberField
                   id="width"
-                  label="Width"
+                  label={t("home.width")}
                   hint={`${LIMITS.minWidth}–${LIMITS.maxWidth}`}
                   value={widthText}
                   onChange={setWidthText}
                 />
                 <NumberField
                   id="height"
-                  label="Height"
+                  label={t("home.height")}
                   hint={`${LIMITS.minHeight}–${LIMITS.maxHeight}`}
                   value={heightText}
                   onChange={setHeightText}
@@ -113,7 +121,7 @@ function PricePage() {
               </div>
 
               <h3 className="mt-6 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Options
+                {t("home.options")}
               </h3>
               <ul className="mt-3 grid gap-2">
                 {EXTRAS.map((e) => (
@@ -185,8 +193,7 @@ function PricePage() {
             </section>
 
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Prices include VAT and are indicative until we confirm the measurements. Fitting and
-              delivery are estimates for mainland Estonia.
+              {t("home.footnote")}
             </p>
           </div>
         </div>
