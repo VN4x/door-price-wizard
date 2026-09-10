@@ -20,26 +20,14 @@ export const EXTRAS: ExtraOption[] = [
     price: 150,
     perYear: true,
   },
-  {
-    id: "safetyGlass",
-    label: "Safety glass",
-    hint: "Toughened outer, laminated inner pane",
-    price: 350,
-    glassOption: true,
-  },
-  {
-    id: "solarGlass",
-    label: "Solar control glass",
-    hint: "Keeps summer heat out of the room",
-    price: 200,
-    glassOption: true,
-  },
+  // Safety and solar glass now live in the glass upgrades, priced per m², so they
+  // are deliberately not repeated here.
   { id: "gasket", label: "Extra gasket", hint: "Third seal for wind-exposed openings", price: 150 },
 ];
 
-export const EXTRA_BY_ID: Record<ExtraId, ExtraOption> = EXTRAS.reduce(
+export const EXTRA_BY_ID: Partial<Record<ExtraId, ExtraOption>> = EXTRAS.reduce(
   (acc, e) => ({ ...acc, [e.id]: e }),
-  {} as Record<ExtraId, ExtraOption>,
+  {} as Partial<Record<ExtraId, ExtraOption>>,
 );
 
 export function extrasTotal(ids: ExtraId[]): number {
