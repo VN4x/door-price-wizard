@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as DifferencesRouteImport } from './routes/differences'
 import { Route as OutletRouteImport } from './routes/outlet'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCalculatorRouteImport } from './routes/admin.calculator'
@@ -39,6 +40,11 @@ const AdminRoute = AdminRouteImport.update({
 const CartRoute = CartRouteImport.update({
   id: '/cart',
   path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DifferencesRoute = DifferencesRouteImport.update({
+  id: '/differences',
+  path: '/differences',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OutletRoute = OutletRouteImport.update({
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/cart': typeof CartRoute
+  '/differences': typeof DifferencesRoute
   '/outlet': typeof OutletRoute
   '/admin/calculator': typeof AdminCalculatorRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cart': typeof CartRoute
+  '/differences': typeof DifferencesRoute
   '/outlet': typeof OutletRoute
   '/admin/calculator': typeof AdminCalculatorRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/cart': typeof CartRoute
+  '/differences': typeof DifferencesRoute
   '/outlet': typeof OutletRoute
   '/admin/calculator': typeof AdminCalculatorRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/cart'
+    | '/differences'
     | '/outlet'
     | '/admin/calculator'
     | '/admin/enquiries'
@@ -185,6 +195,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cart'
+    | '/differences'
     | '/outlet'
     | '/admin/calculator'
     | '/admin/enquiries'
@@ -203,6 +214,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/cart'
+    | '/differences'
     | '/outlet'
     | '/admin/calculator'
     | '/admin/enquiries'
@@ -222,6 +234,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   CartRoute: typeof CartRoute
+  DifferencesRoute: typeof DifferencesRoute
   OutletRoute: typeof OutletRoute
   EnquirySentRoute: typeof EnquirySentRoute
   OfferTokenRoute: typeof OfferTokenRoute
@@ -249,6 +262,13 @@ declare module '@tanstack/react-router' {
       path: '/cart'
       fullPath: '/cart'
       preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/differences': {
+      id: '/differences'
+      path: '/differences'
+      fullPath: '/differences'
+      preLoaderRoute: typeof DifferencesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/outlet': {
@@ -375,6 +395,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   CartRoute: CartRoute,
+  DifferencesRoute: DifferencesRoute,
   OutletRoute: OutletRoute,
   EnquirySentRoute: EnquirySentRoute,
   OfferTokenRoute: OfferTokenRoute,
