@@ -31,7 +31,9 @@ export const Route = createFileRoute("/cart")({
 });
 
 function glassAddonLabels(ids: string[]): string[] {
-  return GLASS_ADDONS.filter((a) => ids.includes(a.id)).map((a) => a.label);
+  return Object.values(GLASS_ADDONS)
+    .filter((a) => ids.includes(a.id))
+    .map((a) => a.label);
 }
 
 function itemGross(item: CartItem): number | null {
