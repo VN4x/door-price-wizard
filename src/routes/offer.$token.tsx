@@ -92,7 +92,20 @@ function OfferPage() {
               Your price
             </h2>
             <dl className="mt-4 space-y-2 text-sm">
-              <PriceRow label="Sliding door" value={eur(price.productNet)} />
+              {price.discountEur > 0 ? (
+                <>
+                  <PriceRow
+                    label="Sliding door, list price"
+                    value={eur(price.productNet + price.discountEur)}
+                  />
+                  <PriceRow
+                    label={offer.discountReason ?? `Discount ${price.discountPercent}%`}
+                    value={`−${eur(price.discountEur)}`}
+                  />
+                </>
+              ) : (
+                <PriceRow label="Sliding door" value={eur(price.productNet)} />
+              )}
               {price.deliveryPrice > 0 && (
                 <PriceRow label="Delivery" value={eur(price.deliveryPrice)} />
               )}

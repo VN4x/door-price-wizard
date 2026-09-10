@@ -7,6 +7,7 @@ import {
   MOCK_PRICE_ITEMS,
 } from "@/mock/data";
 import { DEFAULT_MARKUP } from "@/lib/pricing";
+import { seedAdditions, type AdditionItem } from "@/lib/additions";
 import { deliveryEstimate, installationEstimate } from "@/lib/public-price";
 import type {
   CallbackRequest,
@@ -32,6 +33,11 @@ interface StoreValue {
   offers: Offer[];
   orders: Order[];
   priceItems: PriceItem[];
+  additions: AdditionItem[];
+  updateAddition: (id: string, patch: Partial<AdditionItem>) => void;
+  /** Discount applied automatically to new offers, percent. */
+  campaignPercent: number;
+  setCampaignPercent: (p: number) => void;
   outlet: OutletItem[];
   callbacks: CallbackRequest[];
   /** Carried from the price page into the enquiry form. */
@@ -91,6 +97,8 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
   const [offers, setOffers] = useState<Offer[]>(MOCK_OFFERS);
   const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS);
   const [priceItems, setPriceItems] = useState<PriceItem[]>(MOCK_PRICE_ITEMS);
+  const [additions, setAdditions] = useState<AdditionItem[]>(() => seedAdditions());
+  const [campaignPercent, setCampaignPercent] = useState(0);
   const [outlet, setOutlet] = useState<OutletItem[]>(MOCK_OUTLET);
   const [callbacks, setCallbacks] = useState<CallbackRequest[]>([]);
   const [pending, setPending] = useState<PendingConfig | null>(null);
@@ -108,6 +116,11 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
       offers,
       orders,
       priceItems,
+      additions,
+      updateAddition: (id, patch) =>
+        setAdditions((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a))),
+      campaignPercent,
+      setCampaignPercent,
       outlet,
       callbacks,
       pending,
@@ -173,6 +186,9 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
           lines,
           markupPercent: DEFAULT_MARKUP,
           priceOverride: null,
+          ...(campaignPercent > 0
+            ? { discountPercent: campaignPercent, discountReason: "Campaign discount" }
+            : {}),
           deliveryPrice: customer.needsDelivery ? deliveryEstimate(widest) : 0,
           installationPrice: customer.needsInstallation
             ? lines.reduce((s, l) => s + installationEstimate(l.width, l.qty), 0)
@@ -242,7 +258,21 @@ export function MockStoreProvider({ children }: { children: ReactNode }) {
         ),
       deletePriceItem: (id) => setPriceItems((prev) => prev.filter((p) => p.id !== id)),
     }),
-    [role, enquiries, offers, orders, priceItems, outlet, callbacks, pending, cart, customer, seq],
+    [
+      role,
+      enquiries,
+      offers,
+      orders,
+      priceItems,
+      additions,
+      campaignPercent,
+      outlet,
+      callbacks,
+      pending,
+      cart,
+      customer,
+      seq,
+    ],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

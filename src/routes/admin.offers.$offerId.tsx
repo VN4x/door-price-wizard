@@ -98,9 +98,26 @@ function OfferEditor() {
               onChange={(v) => updateOffer(offer.id, { installationPrice: Number(v) || 0 })}
             />
           </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <NumberField
+              label="Discount (%)"
+              value={String(offer.discountPercent ?? 0)}
+              onChange={(v) =>
+                updateOffer(offer.id, {
+                  discountPercent: Math.min(40, Math.max(0, Number(v) || 0)),
+                })
+              }
+            />
+            <TextField
+              label="Discount reason (shown to the customer)"
+              value={offer.discountReason ?? ""}
+              onChange={(v) => updateOffer(offer.id, { discountReason: v })}
+            />
+          </div>
           <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
             <span className="text-muted-foreground">
               Calculated net {eur(price.calculatedNet)}
+              {price.discountEur > 0 ? ` · discount −${eur(price.discountEur)}` : ""}
             </span>
             {offer.priceOverride !== null && (
               <button
@@ -277,6 +294,30 @@ function NumberField({
       </label>
       <input
         type="number"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm font-medium outline-none focus:border-primary"
+      />
+    </div>
+  );
+}
+
+function TextField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </label>
+      <input
+        type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm font-medium outline-none focus:border-primary"

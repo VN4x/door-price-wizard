@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Send, Trash2 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { extrasLabels } from "@/lib/extras";
-import { GLAZING_PACKAGES } from "@/lib/glass";
+import { GLASS_ADDONS, GLAZING_PACKAGES } from "@/lib/glass";
 import { deliveryEstimate, installationEstimate, publicPrice } from "@/lib/public-price";
 import { FINISH_LABELS, SYSTEM_LABELS, eur } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
@@ -30,6 +30,12 @@ export const Route = createFileRoute("/cart")({
   component: CartPage,
 });
 
+function glassAddonLabels(ids: string[]): string[] {
+  return Object.values(GLASS_ADDONS)
+    .filter((a) => ids.includes(a.id))
+    .map((a) => a.label);
+}
+
 function itemGross(item: CartItem): number | null {
   if (item.fixedGross !== undefined) return item.fixedGross * item.line.qty;
   const p = publicPrice({
@@ -38,6 +44,8 @@ function itemGross(item: CartItem): number | null {
     height: item.line.height,
     finish: item.line.finish,
     extras: item.line.extras ?? [],
+    glazing: item.line.glazing,
+    glassAddons: item.line.glassAddons ?? [],
   });
   return p.totalGross === null ? null : p.totalGross * item.line.qty;
 }
@@ -129,6 +137,11 @@ function CartPage() {
                             {GLAZING_PACKAGES[item.line.glazing].label} · opens{" "}
                             {item.line.activeSide === "L" ? "left" : "right"}
                           </p>
+                          {(item.line.glassAddons ?? []).length > 0 && (
+                            <p className="mt-1 text-sm text-muted-foreground">
+                              Glass upgrades: {glassAddonLabels(item.line.glassAddons ?? []).join(", ")}
+                            </p>
+                          )}
                           {labels.length > 0 && (
                             <p className="mt-1 text-sm text-muted-foreground">
                               Options: {labels.join(", ")}

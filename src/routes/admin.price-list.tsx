@@ -6,6 +6,7 @@ import { eur } from "@/lib/pricing";
 import { useStore, today } from "@/mock/store";
 import type { PriceDriver, PriceItem } from "@/types";
 import type { SystemId } from "@/lib/pricing";
+import { UNIT_LABELS } from "@/lib/additions";
 
 export const Route = createFileRoute("/admin/price-list")({
   head: () => ({
@@ -47,7 +48,16 @@ const SYSTEM_OPTIONS: { id: SystemId; label: string }[] = [
 ];
 
 function PriceList() {
-  const { priceItems, upsertPriceItem, deletePriceItem, role } = useStore();
+  const {
+    priceItems,
+    upsertPriceItem,
+    deletePriceItem,
+    role,
+    additions,
+    updateAddition,
+    campaignPercent,
+    setCampaignPercent,
+  } = useStore();
   const [query, setQuery] = useState("");
   const [draft, setDraft] = useState<PriceItem | null>(null);
 
@@ -103,6 +113,89 @@ function PriceList() {
         placeholder="Search article or category"
         className="w-full max-w-sm rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
       />
+
+      <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">
+              Additions and campaign
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              These are the prices customers see. Turn a line off to hide it from the website.
+            </p>
+          </div>
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Campaign discount on new offers
+            <div className="mt-1.5 flex items-center gap-2">
+              <input
+                type="number"
+                min={0}
+                max={40}
+                value={campaignPercent}
+                onChange={(e) =>
+                  setCampaignPercent(Math.min(40, Math.max(0, Number(e.target.value) || 0)))
+                }
+                className="w-24 rounded-xl border border-border bg-background px-3 py-2 text-sm font-medium text-foreground outline-none focus:border-primary"
+              />
+              <span className="text-sm font-normal normal-case text-muted-foreground">%</span>
+            </div>
+          </label>
+        </div>
+
+        <div className="mt-5 overflow-x-auto">
+          <table className="w-full min-w-[720px] text-sm">
+            <thead className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+              <tr>
+                <th className="py-2 pr-4 font-medium">Addition</th>
+                <th className="py-2 pr-4 font-medium">Counted</th>
+                <th className="py-2 pr-4 text-right font-medium">Price incl. VAT</th>
+                <th className="py-2 pr-4 text-right font-medium">Shown on offer</th>
+                <th className="py-2 text-right font-medium">Active</th>
+              </tr>
+            </thead>
+            <tbody>
+              {additions.map((a) => (
+                <tr key={a.id} className="border-b border-border last:border-0">
+                  <td className="py-2.5 pr-4">
+                    <span className="font-medium text-foreground">{a.label}</span>
+                    <span className="block text-xs text-muted-foreground">{a.hint}</span>
+                  </td>
+                  <td className="py-2.5 pr-4 text-muted-foreground">{UNIT_LABELS[a.unit]}</td>
+                  <td className="py-2.5 pr-4 text-right">
+                    <input
+                      type="number"
+                      min={0}
+                      value={a.price}
+                      onChange={(e) =>
+                        updateAddition(a.id, { price: Math.max(0, Number(e.target.value) || 0) })
+                      }
+                      className="w-24 rounded-lg border border-border bg-background px-2 py-1.5 text-right text-sm tabular-nums outline-none focus:border-primary"
+                    />
+                  </td>
+                  <td className="py-2.5 pr-4 text-right">
+                    <input
+                      type="checkbox"
+                      aria-label={`Show ${a.label} on the offer`}
+                      checked={a.showInOffer}
+                      onChange={(e) => updateAddition(a.id, { showInOffer: e.target.checked })}
+                      className="size-4 accent-[var(--color-primary)]"
+                    />
+                  </td>
+                  <td className="py-2.5 text-right">
+                    <input
+                      type="checkbox"
+                      aria-label={`${a.label} active`}
+                      checked={a.active}
+                      onChange={(e) => updateAddition(a.id, { active: e.target.checked })}
+                      className="size-4 accent-[var(--color-primary)]"
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-sm">
         <table className="w-full min-w-[1040px] text-sm">
