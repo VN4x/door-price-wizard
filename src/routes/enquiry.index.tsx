@@ -4,7 +4,13 @@ import { ArrowRight, Plus } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { DoorDrawing } from "@/components/DoorDrawing";
 import { EXTRAS } from "@/lib/extras";
-import { GLAZING_LIST } from "@/lib/glass";
+import {
+  GLASS_ADDON_LIST,
+  GLAZING_LIST,
+  GLAZING_PACKAGES,
+  doorAreaM2,
+  toggleGlassAddon,
+} from "@/lib/glass";
 import { publicPrice } from "@/lib/public-price";
 import {
   FINISH_LABELS,
@@ -18,7 +24,7 @@ import {
   type SystemId,
 } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
-import type { ActiveSide, ExtraId, GlazingId } from "@/types";
+import type { ActiveSide, ExtraId, GlassAddonId, GlazingId } from "@/types";
 
 export const Route = createFileRoute("/enquiry/")({
   head: () => ({
@@ -52,7 +58,8 @@ function ConfigurePage() {
   const [height, setHeight] = useState(String(pending?.height ?? 2000));
   const [finish, setFinish] = useState<Finish>(pending?.finish ?? "white");
   const [extras, setExtras] = useState<ExtraId[]>(pending?.extras ?? []);
-  const [glazing, setGlazing] = useState<GlazingId>("std2");
+  const [glazing, setGlazing] = useState<GlazingId>(pending?.glazing ?? "std3");
+  const [glassAddons, setGlassAddons] = useState<GlassAddonId[]>(pending?.glassAddons ?? []);
   const [activeSide, setActiveSide] = useState<ActiveSide>("R");
   const [qty, setQty] = useState(1);
   const [note, setNote] = useState("");
@@ -60,9 +67,10 @@ function ConfigurePage() {
   const w = Number(width);
   const h = Number(height);
   const sizeError = validateSize(w, h);
+  const area = doorAreaM2(w || 2000, h || 2000);
   const price = useMemo(
-    () => publicPrice({ system, width: w, height: h, finish, extras }),
-    [system, w, h, finish, extras],
+    () => publicPrice({ system, width: w, height: h, finish, extras, glazing, glassAddons }),
+    [system, w, h, finish, extras, glazing, glassAddons],
   );
   const canAdd = !sizeError && price.totalGross !== null && qty > 0;
 
@@ -78,6 +86,7 @@ function ConfigurePage() {
         qty,
         finish,
         glazing,
+        glassAddons,
         activeSide,
         threshold: thresholdForWidth(w) ?? "t37",
         extras,
@@ -206,13 +215,67 @@ function ConfigurePage() {
                         onChange={() => setGlazing(g.id)}
                         className="mt-0.5 size-4 accent-[var(--color-primary)]"
                       />
-                      <span>
-                        <span className="font-medium text-foreground">{g.label}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex justify-between gap-3">
+                          <span className="font-medium text-foreground">{g.label}</span>
+                          <span className="whitespace-nowrap text-sm font-semibold text-foreground">
+                            {g.upliftPerM2 === 0
+                              ? "included"
+                              : `+${eur(g.upliftPerM2)} / m² · ${eur(g.upliftPerM2 * area)}`}
+                          </span>
+                        </span>
                         <span className="mt-0.5 block text-xs text-muted-foreground">{g.description}</span>
                       </span>
                     </label>
                   ))}
                 </div>
+              </Panel>
+
+              <Panel title="Glass upgrades">
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {GLASS_ADDON_LIST.map((a) => (
+                    <label
+                      key={a.id}
+                      className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 text-sm transition-colors ${
+                        glassAddons.includes(a.id)
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:bg-secondary/60"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={glassAddons.includes(a.id)}
+                        onChange={() => setGlassAddons((prev) => toggleGlassAddon(prev, a.id))}
+                        className="mt-0.5 size-4 shrink-0 accent-[var(--color-primary)]"
+                      />
+                      <span className="min-w-0 flex-1">
+                        <span className="flex justify-between gap-3">
+                          <span className="font-medium text-foreground">{a.label}</span>
+                          <span className="whitespace-nowrap font-semibold text-foreground">
+                            +{eur(a.perM2 * area)}
+                          </span>
+                        </span>
+                        <span className="mt-0.5 block text-xs text-muted-foreground">
+                          {a.hint} · {eur(a.perM2)} / m²
+                        </span>
+                        {a.infoUrl && (
+                          <a
+                            href={a.infoUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-1 inline-block text-xs font-medium text-accent underline"
+                          >
+                            Read more about our glass
+                          </a>
+                        )}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Glass upgrades are charged per square metre of door. This door is{" "}
+                  {area.toFixed(2)} m².
+                </p>
               </Panel>
 
               <Panel title="Which panel slides open?">
@@ -295,6 +358,7 @@ function ConfigurePage() {
                       qty,
                       finish,
                       glazing,
+                      glassAddons,
                       activeSide,
                       threshold: thresholdForWidth(w) ?? "t37",
                     }}
@@ -304,6 +368,10 @@ function ConfigurePage() {
                   <Row label="System" value={SYSTEM_LABELS[system]} />
                   <Row label="Size" value={`${w || "–"} × ${h || "–"} mm`} />
                   <Row label="Colour" value={FINISH_LABELS[finish]} />
+                  <Row label="Glass" value={GLAZING_PACKAGES[glazing].label} />
+                  {price.glassGross > 0 && (
+                    <Row label="Glass upgrades" value={eur(price.glassGross)} />
+                  )}
                   <Row label="Quantity" value={`${qty} pc`} />
                 </dl>
 
