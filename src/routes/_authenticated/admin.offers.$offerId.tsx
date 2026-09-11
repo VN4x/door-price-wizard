@@ -14,7 +14,7 @@ import { FINISH_LABELS, VAT_RATE, eur } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
 import type { OfferStatus } from "@/types";
 
-export const Route = createFileRoute("/admin/offers/$offerId")({
+export const Route = createFileRoute("/_authenticated/admin/offers/$offerId")({
   head: () => ({
     meta: [
       { title: "Offer editor | Kvaliteetaken admin" },

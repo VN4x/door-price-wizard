@@ -15,7 +15,7 @@ import {
 import { DemoBar } from "@/components/DemoBar";
 import { useStore } from "@/mock/store";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
       { title: "Admin | Kvaliteetaken" },

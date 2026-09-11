@@ -20,7 +20,7 @@ import {
 } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
 
-export const Route = createFileRoute("/admin/calculator")({
+export const Route = createFileRoute("/_authenticated/admin/calculator")({
   head: () => ({
     meta: [
       { title: "Cost calculator | Kvaliteetaken admin" },

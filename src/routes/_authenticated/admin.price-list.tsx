@@ -8,7 +8,7 @@ import type { PriceDriver, PriceItem } from "@/types";
 import type { SystemId } from "@/lib/pricing";
 import { UNIT_LABELS } from "@/lib/additions";
 
-export const Route = createFileRoute("/admin/price-list")({
+export const Route = createFileRoute("/_authenticated/admin/price-list")({
   head: () => ({
     meta: [
       { title: "Price lists | Kvaliteetaken admin" },

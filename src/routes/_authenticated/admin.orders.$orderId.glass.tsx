@@ -3,7 +3,7 @@ import { ArrowLeft, Download, Printer } from "lucide-react";
 import { glassOrderText, glassUnitsForOrder } from "@/lib/glass";
 import { useStore } from "@/mock/store";
 
-export const Route = createFileRoute("/admin/orders/$orderId/glass")({
+export const Route = createFileRoute("/_authenticated/admin/orders/$orderId/glass")({
   head: () => ({
     meta: [
       { title: "Glass order | Kvaliteetaken admin" },

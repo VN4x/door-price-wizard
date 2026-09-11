@@ -6,7 +6,7 @@ import { customerPricing } from "@/lib/offer";
 import { eur } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
 
-export const Route = createFileRoute("/admin/offers/")({
+export const Route = createFileRoute("/_authenticated/admin/offers/")({
   head: () => ({
     meta: [
       { title: "Offers | Kvaliteetaken admin" },
