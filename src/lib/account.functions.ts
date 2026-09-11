@@ -87,7 +87,8 @@ export const ensureAccount = createServerFn({ method: "POST" })
 export const requestStaffAccess = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { error } = await context.supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("profiles")
       .update({ staff_requested: true, updated_at: new Date().toISOString() })
       .eq("id", context.userId);
