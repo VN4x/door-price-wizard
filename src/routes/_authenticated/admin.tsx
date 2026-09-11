@@ -104,14 +104,6 @@ function AdminLayout() {
               </Link>
             );
           })}
-          <span className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground/60">
-            <Users className="size-4" aria-hidden />
-            Users
-          </span>
-          <span className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground/60">
-            <Settings className="size-4" aria-hidden />
-            Settings
-          </span>
         </nav>
       </aside>
 
