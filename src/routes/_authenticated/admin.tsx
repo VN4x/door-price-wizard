@@ -128,12 +128,21 @@ function AdminLayout() {
           </button>
           <div className="flex shrink-0 items-center gap-2">
             <span className="grid size-9 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-              EK
+              {initials || "?"}
             </span>
             <span className="hidden text-sm sm:block">
-              <span className="block font-medium text-foreground">Elmo K.</span>
+              <span className="block font-medium text-foreground">
+                {account?.fullName || account?.email}
+              </span>
               <span className="block text-xs capitalize text-muted-foreground">{role}</span>
             </span>
+            <button
+              type="button"
+              onClick={() => void signOut()}
+              className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-secondary"
+            >
+              Sign out
+            </button>
           </div>
         </header>
 
