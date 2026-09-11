@@ -27,7 +27,15 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 interface NavItem {
-  to: "/admin" | "/admin/enquiries" | "/admin/offers" | "/admin/orders" | "/admin/calculator" | "/admin/price-list";
+  to:
+    | "/admin"
+    | "/admin/enquiries"
+    | "/admin/offers"
+    | "/admin/orders"
+    | "/admin/calculator"
+    | "/admin/price-list"
+    | "/admin/users"
+    | "/admin/settings";
   label: string;
   icon: typeof LayoutDashboard;
   exact?: boolean;
@@ -41,15 +49,23 @@ const NAV: NavItem[] = [
   { to: "/admin/orders", label: "Orders", icon: Factory },
   { to: "/admin/calculator", label: "Calculator", icon: Calculator },
   { to: "/admin/price-list", label: "Price lists", icon: Tags, adminOnly: true },
+  { to: "/admin/users", label: "Users", icon: Users, adminOnly: true },
+  { to: "/admin/settings", label: "Settings", icon: Settings, adminOnly: true },
 ];
 
 function AdminLayout() {
-  const { role, enquiries } = useStore();
+  const { enquiries } = useStore();
+  const { role, account, signOut } = useAuth();
   const newCount = enquiries.filter((e) => e.status === "new").length;
+  const initials = (account?.fullName || account?.email || "?")
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .join("");
 
   return (
     <>
-      <DemoBar />
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
       <aside className="border-b border-border bg-sidebar lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r print:hidden">
         <div className="px-5 py-5">
