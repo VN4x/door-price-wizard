@@ -52,10 +52,11 @@ export interface AddonRow {
 }
 
 /** Throws unless the caller is an active owner. */
-async function assertOwner(supabase: {
-  rpc: (fn: "is_owner", args: { _user_id: string }) => Promise<{ data: unknown }>;
-}, userId: string) {
-  const { data } = await supabase.rpc("is_owner", { _user_id: userId });
+async function assertOwner(
+  supabase: { rpc: (fn: never, args: never) => PromiseLike<{ data: unknown }> },
+  userId: string,
+) {
+  const { data } = await supabase.rpc("is_owner" as never, { _user_id: userId } as never);
   if (data !== true) throw new Error("Forbidden");
 }
 
