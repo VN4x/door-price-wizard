@@ -10,31 +10,33 @@ export interface Account {
   fullName: string;
   status: AccountStatus;
   roles: AppRole[];
-  /** True while the account waits for the owner to approve it. */
-  isPending: boolean;
+  staffRequested: boolean;
+  /** True while a staff request waits for the owner. */
+  awaitingApproval: boolean;
   isStaff: boolean;
   isOwner: boolean;
 }
 
 /**
  * Makes sure the signed-in user has a profile row, then reports what they may
- * see. A brand new account is `pending` with no role until the owner approves
- * it — the very first account ever created becomes the owner automatically.
+ * see. Customers are usable right away; staff access only exists once the owner
+ * grants a staff role. The very first account ever created becomes the owner.
  */
 export const ensureAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<Account> => {
     const { supabase, userId, claims } = context;
-    const email = (claims as { email?: string }).email ?? "";
+    const meta = claims as {
+      email?: string;
+      user_metadata?: { full_name?: string; name?: string };
+    };
+    const email = meta.email ?? "";
     const name =
-      ((claims as { user_metadata?: { full_name?: string; name?: string } }).user_metadata
-        ?.full_name ??
-        (claims as { user_metadata?: { name?: string } }).user_metadata?.name ??
-        "") || email.split("@")[0] || "";
+      meta.user_metadata?.full_name ?? meta.user_metadata?.name ?? email.split("@")[0] ?? "";
 
     let { data: profile } = await supabase
       .from("profiles")
-      .select("id, email, full_name, status")
+      .select("id, email, full_name, status, staff_requested")
       .eq("id", userId)
       .maybeSingle();
 
@@ -47,13 +49,8 @@ export const ensureAccount = createServerFn({ method: "POST" })
 
       const { data: created, error } = await supabaseAdmin
         .from("profiles")
-        .insert({
-          id: userId,
-          email,
-          full_name: name,
-          status: first ? "active" : "pending",
-        })
-        .select("id, email, full_name, status")
+        .insert({ id: userId, email, full_name: name, status: "active" })
+        .select("id, email, full_name, status, staff_requested")
         .single();
       if (error) throw new Error(error.message);
       profile = created;
@@ -70,7 +67,8 @@ export const ensureAccount = createServerFn({ method: "POST" })
 
     const roles = (roleRows ?? []).map((r) => r.role as AppRole);
     const active = profile.status === "active";
-    const isStaff = active && roles.some((r) => r === "owner" || r === "sales" || r === "production");
+    const isStaff =
+      active && roles.some((r) => r === "owner" || r === "sales" || r === "production");
 
     return {
       id: profile.id,
@@ -78,19 +76,20 @@ export const ensureAccount = createServerFn({ method: "POST" })
       fullName: profile.full_name,
       status: profile.status as AccountStatus,
       roles,
-      isPending: profile.status === "pending",
+      staffRequested: profile.staff_requested,
+      awaitingApproval: profile.staff_requested && !isStaff,
       isStaff,
       isOwner: active && roles.includes("owner"),
     };
   });
 
-/** Lets a signed-in person ask to be given staff access. */
+/** A signed-in person asks the owner for staff access. */
 export const requestStaffAccess = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { error } = await context.supabase
       .from("profiles")
-      .update({ status: "pending", updated_at: new Date().toISOString() })
+      .update({ staff_requested: true, updated_at: new Date().toISOString() })
       .eq("id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
