@@ -4,6 +4,7 @@ import { Lock, Plus, X } from "lucide-react";
 import { StatusChip } from "@/components/StatusChip";
 import { eur } from "@/lib/pricing";
 import { useStore, today } from "@/mock/store";
+import { useAuth } from "@/lib/auth";
 import type { PriceDriver, PriceItem } from "@/types";
 import type { SystemId } from "@/lib/pricing";
 import { UNIT_LABELS } from "@/lib/additions";
