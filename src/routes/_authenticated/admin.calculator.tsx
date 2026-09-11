@@ -18,7 +18,7 @@ import {
   type SystemId,
   type ThresholdId,
 } from "@/lib/pricing";
-import { useStore } from "@/mock/store";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/admin/calculator")({
   head: () => ({
@@ -38,7 +38,7 @@ const FINISHES: Finish[] = ["white", "oneSide", "bothSides"];
 const SYSTEMS: SystemId[] = ["slide", "hst"];
 
 function CalculatorPage() {
-  const { role } = useStore();
+  const { role } = useAuth();
   const [widthText, setWidthText] = useState("3500");
   const [heightText, setHeightText] = useState("2178");
   const [finish, setFinish] = useState<Finish>("white");

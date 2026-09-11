@@ -52,12 +52,12 @@ function PriceList() {
     priceItems,
     upsertPriceItem,
     deletePriceItem,
-    role,
     additions,
     updateAddition,
     campaignPercent,
     setCampaignPercent,
   } = useStore();
+  const { role } = useAuth();
   const [query, setQuery] = useState("");
   const [draft, setDraft] = useState<PriceItem | null>(null);
 
