@@ -186,6 +186,7 @@ export type Database = {
           full_name: string
           id: string
           last_seen_at: string | null
+          staff_requested: boolean
           status: Database["public"]["Enums"]["profile_status"]
           updated_at: string
         }
@@ -195,6 +196,7 @@ export type Database = {
           full_name?: string
           id: string
           last_seen_at?: string | null
+          staff_requested?: boolean
           status?: Database["public"]["Enums"]["profile_status"]
           updated_at?: string
         }
@@ -204,6 +206,7 @@ export type Database = {
           full_name?: string
           id?: string
           last_seen_at?: string | null
+          staff_requested?: boolean
           status?: Database["public"]["Enums"]["profile_status"]
           updated_at?: string
         }
