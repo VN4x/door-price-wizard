@@ -15,6 +15,13 @@
       "when": 1789122148141,
       "tag": "0001_add_staff_requested",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789122180489,
+      "tag": "0002_tighten_profile_self_update",
+      "breakpoints": true
     }
   ]
 }
