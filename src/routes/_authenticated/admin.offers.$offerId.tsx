@@ -12,9 +12,10 @@ import {
 } from "@/lib/offer";
 import { FINISH_LABELS, VAT_RATE, eur } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
+import { useAuth } from "@/lib/auth";
 import type { OfferStatus } from "@/types";
 
-export const Route = createFileRoute("/admin/offers/$offerId")({
+export const Route = createFileRoute("/_authenticated/admin/offers/$offerId")({
   head: () => ({
     meta: [
       { title: "Offer editor | Kvaliteetaken admin" },
@@ -29,7 +30,8 @@ const STATUSES: OfferStatus[] = ["draft", "sent", "accepted", "declined"];
 
 function OfferEditor() {
   const { offerId } = Route.useParams();
-  const { offers, updateOffer, role } = useStore();
+  const { offers, updateOffer } = useStore();
+  const { role } = useAuth();
   const offer = offers.find((o) => o.id === offerId);
   if (!offer) throw notFound();
 

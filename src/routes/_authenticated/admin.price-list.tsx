@@ -4,11 +4,12 @@ import { Lock, Plus, X } from "lucide-react";
 import { StatusChip } from "@/components/StatusChip";
 import { eur } from "@/lib/pricing";
 import { useStore, today } from "@/mock/store";
+import { useAuth } from "@/lib/auth";
 import type { PriceDriver, PriceItem } from "@/types";
 import type { SystemId } from "@/lib/pricing";
 import { UNIT_LABELS } from "@/lib/additions";
 
-export const Route = createFileRoute("/admin/price-list")({
+export const Route = createFileRoute("/_authenticated/admin/price-list")({
   head: () => ({
     meta: [
       { title: "Price lists | Kvaliteetaken admin" },
@@ -52,12 +53,12 @@ function PriceList() {
     priceItems,
     upsertPriceItem,
     deletePriceItem,
-    role,
     additions,
     updateAddition,
     campaignPercent,
     setCampaignPercent,
   } = useStore();
+  const { role } = useAuth();
   const [query, setQuery] = useState("");
   const [draft, setDraft] = useState<PriceItem | null>(null);
 

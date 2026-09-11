@@ -12,10 +12,10 @@ import {
   Tags,
   Users,
 } from "lucide-react";
-import { DemoBar } from "@/components/DemoBar";
 import { useStore } from "@/mock/store";
+import { useAuth } from "@/lib/auth";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
       { title: "Admin | Kvaliteetaken" },
@@ -27,7 +27,15 @@ export const Route = createFileRoute("/admin")({
 });
 
 interface NavItem {
-  to: "/admin" | "/admin/enquiries" | "/admin/offers" | "/admin/orders" | "/admin/calculator" | "/admin/price-list";
+  to:
+    | "/admin"
+    | "/admin/enquiries"
+    | "/admin/offers"
+    | "/admin/orders"
+    | "/admin/calculator"
+    | "/admin/price-list"
+    | "/admin/users"
+    | "/admin/settings";
   label: string;
   icon: typeof LayoutDashboard;
   exact?: boolean;
@@ -41,15 +49,23 @@ const NAV: NavItem[] = [
   { to: "/admin/orders", label: "Orders", icon: Factory },
   { to: "/admin/calculator", label: "Calculator", icon: Calculator },
   { to: "/admin/price-list", label: "Price lists", icon: Tags, adminOnly: true },
+  { to: "/admin/users", label: "Users", icon: Users, adminOnly: true },
+  { to: "/admin/settings", label: "Settings", icon: Settings, adminOnly: true },
 ];
 
 function AdminLayout() {
-  const { role, enquiries } = useStore();
+  const { enquiries } = useStore();
+  const { role, account, signOut } = useAuth();
   const newCount = enquiries.filter((e) => e.status === "new").length;
+  const initials = (account?.fullName || account?.email || "?")
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .join("");
 
   return (
     <>
-      <DemoBar />
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
       <aside className="border-b border-border bg-sidebar lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r print:hidden">
         <div className="px-5 py-5">
@@ -88,14 +104,6 @@ function AdminLayout() {
               </Link>
             );
           })}
-          <span className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground/60">
-            <Users className="size-4" aria-hidden />
-            Users
-          </span>
-          <span className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-muted-foreground/60">
-            <Settings className="size-4" aria-hidden />
-            Settings
-          </span>
         </nav>
       </aside>
 
@@ -120,12 +128,21 @@ function AdminLayout() {
           </button>
           <div className="flex shrink-0 items-center gap-2">
             <span className="grid size-9 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-              EK
+              {initials || "?"}
             </span>
             <span className="hidden text-sm sm:block">
-              <span className="block font-medium text-foreground">Elmo K.</span>
+              <span className="block font-medium text-foreground">
+                {account?.fullName || account?.email}
+              </span>
               <span className="block text-xs capitalize text-muted-foreground">{role}</span>
             </span>
+            <button
+              type="button"
+              onClick={() => void signOut()}
+              className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-secondary"
+            >
+              Sign out
+            </button>
           </div>
         </header>
 

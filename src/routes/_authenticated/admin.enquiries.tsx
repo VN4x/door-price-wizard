@@ -7,7 +7,7 @@ import { FINISH_LABELS } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
 import type { Enquiry } from "@/types";
 
-export const Route = createFileRoute("/admin/enquiries")({
+export const Route = createFileRoute("/_authenticated/admin/enquiries")({
   head: () => ({
     meta: [
       { title: "Enquiries | Kvaliteetaken admin" },

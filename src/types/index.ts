@@ -1,6 +1,6 @@
 import type { Finish, SystemId, ThresholdId } from "@/lib/pricing";
 
-export type Role = "customer" | "sales" | "admin";
+export type Role = "customer" | "sales" | "production" | "admin";
 
 export type ActiveSide = "L" | "R";
 

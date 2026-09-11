@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { OrderStatusChip } from "@/components/StatusChip";
 import { useStore } from "@/mock/store";
 
-export const Route = createFileRoute("/admin/orders/")({
+export const Route = createFileRoute("/_authenticated/admin/orders/")({
   head: () => ({
     meta: [
       { title: "Orders | Kvaliteetaken admin" },

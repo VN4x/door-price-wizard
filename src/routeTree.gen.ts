@@ -10,31 +10,39 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as DifferencesRouteImport } from './routes/differences'
 import { Route as OutletRouteImport } from './routes/outlet'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AdminCalculatorRouteImport } from './routes/admin.calculator'
-import { Route as AdminEnquiriesRouteImport } from './routes/admin.enquiries'
-import { Route as AdminPriceListRouteImport } from './routes/admin.price-list'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as EnquiryIndexRouteImport } from './routes/enquiry.index'
 import { Route as EnquirySentRouteImport } from './routes/enquiry.sent'
 import { Route as OfferTokenRouteImport } from './routes/offer.$token'
-import { Route as AdminOffersIndexRouteImport } from './routes/admin.offers.index'
-import { Route as AdminOffersOfferIdRouteImport } from './routes/admin.offers.$offerId'
-import { Route as AdminOrdersIndexRouteImport } from './routes/admin.orders.index'
-import { Route as AdminOrdersOrderIdGlassRouteImport } from './routes/admin.orders.$orderId.glass'
-import { Route as AdminOrdersOrderIdProductionRouteImport } from './routes/admin.orders.$orderId.production'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminCalculatorRouteImport } from './routes/_authenticated/admin.calculator'
+import { Route as AuthenticatedAdminEnquiriesRouteImport } from './routes/_authenticated/admin.enquiries'
+import { Route as AuthenticatedAdminPriceListRouteImport } from './routes/_authenticated/admin.price-list'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as AuthenticatedAdminOffersIndexRouteImport } from './routes/_authenticated/admin.offers.index'
+import { Route as AuthenticatedAdminOffersOfferIdRouteImport } from './routes/_authenticated/admin.offers.$offerId'
+import { Route as AuthenticatedAdminOrdersIndexRouteImport } from './routes/_authenticated/admin.orders.index'
+import { Route as AuthenticatedAdminOrdersOrderIdGlassRouteImport } from './routes/_authenticated/admin.orders.$orderId.glass'
+import { Route as AuthenticatedAdminOrdersOrderIdProductionRouteImport } from './routes/_authenticated/admin.orders.$orderId.production'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CartRoute = CartRouteImport.update({
@@ -52,25 +60,10 @@ const OutletRoute = OutletRouteImport.update({
   path: '/outlet',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCalculatorRoute = AdminCalculatorRouteImport.update({
-  id: '/calculator',
-  path: '/calculator',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
-  id: '/enquiries',
-  path: '/enquiries',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPriceListRoute = AdminPriceListRouteImport.update({
-  id: '/price-list',
-  path: '/price-list',
-  getParentRoute: () => AdminRoute,
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const EnquiryIndexRoute = EnquiryIndexRouteImport.update({
   id: '/enquiry/',
@@ -87,105 +80,156 @@ const OfferTokenRoute = OfferTokenRouteImport.update({
   path: '/offer/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminOffersIndexRoute = AdminOffersIndexRouteImport.update({
-  id: '/offers/',
-  path: '/offers/',
-  getParentRoute: () => AdminRoute,
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AdminOffersOfferIdRoute = AdminOffersOfferIdRouteImport.update({
-  id: '/offers/$offerId',
-  path: '/offers/$offerId',
-  getParentRoute: () => AdminRoute,
+const AuthenticatedAdminCalculatorRoute =
+  AuthenticatedAdminCalculatorRouteImport.update({
+    id: '/calculator',
+    path: '/calculator',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminEnquiriesRoute =
+  AuthenticatedAdminEnquiriesRouteImport.update({
+    id: '/enquiries',
+    path: '/enquiries',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPriceListRoute =
+  AuthenticatedAdminPriceListRouteImport.update({
+    id: '/price-list',
+    path: '/price-list',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AdminOrdersIndexRoute = AdminOrdersIndexRouteImport.update({
-  id: '/orders/',
-  path: '/orders/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminOrdersOrderIdGlassRoute = AdminOrdersOrderIdGlassRouteImport.update({
-  id: '/orders/$orderId/glass',
-  path: '/orders/$orderId/glass',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminOrdersOrderIdProductionRoute =
-  AdminOrdersOrderIdProductionRouteImport.update({
+const AuthenticatedAdminOffersIndexRoute =
+  AuthenticatedAdminOffersIndexRouteImport.update({
+    id: '/offers/',
+    path: '/offers/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOffersOfferIdRoute =
+  AuthenticatedAdminOffersOfferIdRouteImport.update({
+    id: '/offers/$offerId',
+    path: '/offers/$offerId',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOrdersIndexRoute =
+  AuthenticatedAdminOrdersIndexRouteImport.update({
+    id: '/orders/',
+    path: '/orders/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOrdersOrderIdGlassRoute =
+  AuthenticatedAdminOrdersOrderIdGlassRouteImport.update({
+    id: '/orders/$orderId/glass',
+    path: '/orders/$orderId/glass',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOrdersOrderIdProductionRoute =
+  AuthenticatedAdminOrdersOrderIdProductionRouteImport.update({
     id: '/orders/$orderId/production',
     path: '/orders/$orderId/production',
-    getParentRoute: () => AdminRoute,
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/differences': typeof DifferencesRoute
   '/outlet': typeof OutletRoute
-  '/admin/calculator': typeof AdminCalculatorRoute
-  '/admin/enquiries': typeof AdminEnquiriesRoute
-  '/admin/price-list': typeof AdminPriceListRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/enquiry/sent': typeof EnquirySentRoute
   '/offer/$token': typeof OfferTokenRoute
-  '/admin/': typeof AdminIndexRoute
   '/enquiry/': typeof EnquiryIndexRoute
-  '/admin/offers/$offerId': typeof AdminOffersOfferIdRoute
-  '/admin/offers/': typeof AdminOffersIndexRoute
-  '/admin/orders/': typeof AdminOrdersIndexRoute
-  '/admin/orders/$orderId/glass': typeof AdminOrdersOrderIdGlassRoute
-  '/admin/orders/$orderId/production': typeof AdminOrdersOrderIdProductionRoute
+  '/admin/calculator': typeof AuthenticatedAdminCalculatorRoute
+  '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
+  '/admin/price-list': typeof AuthenticatedAdminPriceListRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/offers/$offerId': typeof AuthenticatedAdminOffersOfferIdRoute
+  '/admin/offers/': typeof AuthenticatedAdminOffersIndexRoute
+  '/admin/orders/': typeof AuthenticatedAdminOrdersIndexRoute
+  '/admin/orders/$orderId/glass': typeof AuthenticatedAdminOrdersOrderIdGlassRoute
+  '/admin/orders/$orderId/production': typeof AuthenticatedAdminOrdersOrderIdProductionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/differences': typeof DifferencesRoute
   '/outlet': typeof OutletRoute
-  '/admin/calculator': typeof AdminCalculatorRoute
-  '/admin/enquiries': typeof AdminEnquiriesRoute
-  '/admin/price-list': typeof AdminPriceListRoute
   '/enquiry/sent': typeof EnquirySentRoute
   '/offer/$token': typeof OfferTokenRoute
-  '/admin': typeof AdminIndexRoute
   '/enquiry': typeof EnquiryIndexRoute
-  '/admin/offers/$offerId': typeof AdminOffersOfferIdRoute
-  '/admin/offers': typeof AdminOffersIndexRoute
-  '/admin/orders': typeof AdminOrdersIndexRoute
-  '/admin/orders/$orderId/glass': typeof AdminOrdersOrderIdGlassRoute
-  '/admin/orders/$orderId/production': typeof AdminOrdersOrderIdProductionRoute
+  '/admin/calculator': typeof AuthenticatedAdminCalculatorRoute
+  '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
+  '/admin/price-list': typeof AuthenticatedAdminPriceListRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/offers/$offerId': typeof AuthenticatedAdminOffersOfferIdRoute
+  '/admin/offers': typeof AuthenticatedAdminOffersIndexRoute
+  '/admin/orders': typeof AuthenticatedAdminOrdersIndexRoute
+  '/admin/orders/$orderId/glass': typeof AuthenticatedAdminOrdersOrderIdGlassRoute
+  '/admin/orders/$orderId/production': typeof AuthenticatedAdminOrdersOrderIdProductionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/differences': typeof DifferencesRoute
   '/outlet': typeof OutletRoute
-  '/admin/calculator': typeof AdminCalculatorRoute
-  '/admin/enquiries': typeof AdminEnquiriesRoute
-  '/admin/price-list': typeof AdminPriceListRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/enquiry/sent': typeof EnquirySentRoute
   '/offer/$token': typeof OfferTokenRoute
-  '/admin/': typeof AdminIndexRoute
   '/enquiry/': typeof EnquiryIndexRoute
-  '/admin/offers/$offerId': typeof AdminOffersOfferIdRoute
-  '/admin/offers/': typeof AdminOffersIndexRoute
-  '/admin/orders/': typeof AdminOrdersIndexRoute
-  '/admin/orders/$orderId/glass': typeof AdminOrdersOrderIdGlassRoute
-  '/admin/orders/$orderId/production': typeof AdminOrdersOrderIdProductionRoute
+  '/_authenticated/admin/calculator': typeof AuthenticatedAdminCalculatorRoute
+  '/_authenticated/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
+  '/_authenticated/admin/price-list': typeof AuthenticatedAdminPriceListRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/offers/$offerId': typeof AuthenticatedAdminOffersOfferIdRoute
+  '/_authenticated/admin/offers/': typeof AuthenticatedAdminOffersIndexRoute
+  '/_authenticated/admin/orders/': typeof AuthenticatedAdminOrdersIndexRoute
+  '/_authenticated/admin/orders/$orderId/glass': typeof AuthenticatedAdminOrdersOrderIdGlassRoute
+  '/_authenticated/admin/orders/$orderId/production': typeof AuthenticatedAdminOrdersOrderIdProductionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
+    | '/auth'
     | '/cart'
     | '/differences'
     | '/outlet'
+    | '/admin'
+    | '/enquiry/sent'
+    | '/offer/$token'
+    | '/enquiry/'
     | '/admin/calculator'
     | '/admin/enquiries'
     | '/admin/price-list'
-    | '/enquiry/sent'
-    | '/offer/$token'
+    | '/admin/settings'
+    | '/admin/users'
     | '/admin/'
-    | '/enquiry/'
     | '/admin/offers/$offerId'
     | '/admin/offers/'
     | '/admin/orders/'
@@ -194,16 +238,19 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/cart'
     | '/differences'
     | '/outlet'
+    | '/enquiry/sent'
+    | '/offer/$token'
+    | '/enquiry'
     | '/admin/calculator'
     | '/admin/enquiries'
     | '/admin/price-list'
-    | '/enquiry/sent'
-    | '/offer/$token'
+    | '/admin/settings'
+    | '/admin/users'
     | '/admin'
-    | '/enquiry'
     | '/admin/offers/$offerId'
     | '/admin/offers'
     | '/admin/orders'
@@ -212,27 +259,32 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/admin'
+    | '/_authenticated'
+    | '/auth'
     | '/cart'
     | '/differences'
     | '/outlet'
-    | '/admin/calculator'
-    | '/admin/enquiries'
-    | '/admin/price-list'
+    | '/_authenticated/admin'
     | '/enquiry/sent'
     | '/offer/$token'
-    | '/admin/'
     | '/enquiry/'
-    | '/admin/offers/$offerId'
-    | '/admin/offers/'
-    | '/admin/orders/'
-    | '/admin/orders/$orderId/glass'
-    | '/admin/orders/$orderId/production'
+    | '/_authenticated/admin/calculator'
+    | '/_authenticated/admin/enquiries'
+    | '/_authenticated/admin/price-list'
+    | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/users'
+    | '/_authenticated/admin/'
+    | '/_authenticated/admin/offers/$offerId'
+    | '/_authenticated/admin/offers/'
+    | '/_authenticated/admin/orders/'
+    | '/_authenticated/admin/orders/$orderId/glass'
+    | '/_authenticated/admin/orders/$orderId/production'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRouteWithChildren
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   CartRoute: typeof CartRoute
   DifferencesRoute: typeof DifferencesRoute
   OutletRoute: typeof OutletRoute
@@ -250,11 +302,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cart': {
@@ -278,33 +337,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OutletRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/calculator': {
-      id: '/admin/calculator'
-      path: '/calculator'
-      fullPath: '/admin/calculator'
-      preLoaderRoute: typeof AdminCalculatorRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/enquiries': {
-      id: '/admin/enquiries'
-      path: '/enquiries'
-      fullPath: '/admin/enquiries'
-      preLoaderRoute: typeof AdminEnquiriesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/price-list': {
-      id: '/admin/price-list'
-      path: '/price-list'
-      fullPath: '/admin/price-list'
-      preLoaderRoute: typeof AdminPriceListRouteImport
-      parentRoute: typeof AdminRoute
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/enquiry/': {
       id: '/enquiry/'
@@ -327,73 +365,134 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfferTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/offers/': {
-      id: '/admin/offers/'
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/calculator': {
+      id: '/_authenticated/admin/calculator'
+      path: '/calculator'
+      fullPath: '/admin/calculator'
+      preLoaderRoute: typeof AuthenticatedAdminCalculatorRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/enquiries': {
+      id: '/_authenticated/admin/enquiries'
+      path: '/enquiries'
+      fullPath: '/admin/enquiries'
+      preLoaderRoute: typeof AuthenticatedAdminEnquiriesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/price-list': {
+      id: '/_authenticated/admin/price-list'
+      path: '/price-list'
+      fullPath: '/admin/price-list'
+      preLoaderRoute: typeof AuthenticatedAdminPriceListRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/offers/': {
+      id: '/_authenticated/admin/offers/'
       path: '/offers'
       fullPath: '/admin/offers/'
-      preLoaderRoute: typeof AdminOffersIndexRouteImport
-      parentRoute: typeof AdminRoute
+      preLoaderRoute: typeof AuthenticatedAdminOffersIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/admin/offers/$offerId': {
-      id: '/admin/offers/$offerId'
+    '/_authenticated/admin/offers/$offerId': {
+      id: '/_authenticated/admin/offers/$offerId'
       path: '/offers/$offerId'
       fullPath: '/admin/offers/$offerId'
-      preLoaderRoute: typeof AdminOffersOfferIdRouteImport
-      parentRoute: typeof AdminRoute
+      preLoaderRoute: typeof AuthenticatedAdminOffersOfferIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/admin/orders/': {
-      id: '/admin/orders/'
+    '/_authenticated/admin/orders/': {
+      id: '/_authenticated/admin/orders/'
       path: '/orders'
       fullPath: '/admin/orders/'
-      preLoaderRoute: typeof AdminOrdersIndexRouteImport
-      parentRoute: typeof AdminRoute
+      preLoaderRoute: typeof AuthenticatedAdminOrdersIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/admin/orders/$orderId/glass': {
-      id: '/admin/orders/$orderId/glass'
+    '/_authenticated/admin/orders/$orderId/glass': {
+      id: '/_authenticated/admin/orders/$orderId/glass'
       path: '/orders/$orderId/glass'
       fullPath: '/admin/orders/$orderId/glass'
-      preLoaderRoute: typeof AdminOrdersOrderIdGlassRouteImport
-      parentRoute: typeof AdminRoute
+      preLoaderRoute: typeof AuthenticatedAdminOrdersOrderIdGlassRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/admin/orders/$orderId/production': {
-      id: '/admin/orders/$orderId/production'
+    '/_authenticated/admin/orders/$orderId/production': {
+      id: '/_authenticated/admin/orders/$orderId/production'
       path: '/orders/$orderId/production'
       fullPath: '/admin/orders/$orderId/production'
-      preLoaderRoute: typeof AdminOrdersOrderIdProductionRouteImport
-      parentRoute: typeof AdminRoute
+      preLoaderRoute: typeof AuthenticatedAdminOrdersOrderIdProductionRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
   }
 }
 
-interface AdminRouteChildren {
-  AdminCalculatorRoute: typeof AdminCalculatorRoute
-  AdminEnquiriesRoute: typeof AdminEnquiriesRoute
-  AdminPriceListRoute: typeof AdminPriceListRoute
-  AdminIndexRoute: typeof AdminIndexRoute
-  AdminOffersOfferIdRoute: typeof AdminOffersOfferIdRoute
-  AdminOffersIndexRoute: typeof AdminOffersIndexRoute
-  AdminOrdersIndexRoute: typeof AdminOrdersIndexRoute
-  AdminOrdersOrderIdGlassRoute: typeof AdminOrdersOrderIdGlassRoute
-  AdminOrdersOrderIdProductionRoute: typeof AdminOrdersOrderIdProductionRoute
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminCalculatorRoute: typeof AuthenticatedAdminCalculatorRoute
+  AuthenticatedAdminEnquiriesRoute: typeof AuthenticatedAdminEnquiriesRoute
+  AuthenticatedAdminPriceListRoute: typeof AuthenticatedAdminPriceListRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminOffersOfferIdRoute: typeof AuthenticatedAdminOffersOfferIdRoute
+  AuthenticatedAdminOffersIndexRoute: typeof AuthenticatedAdminOffersIndexRoute
+  AuthenticatedAdminOrdersIndexRoute: typeof AuthenticatedAdminOrdersIndexRoute
+  AuthenticatedAdminOrdersOrderIdGlassRoute: typeof AuthenticatedAdminOrdersOrderIdGlassRoute
+  AuthenticatedAdminOrdersOrderIdProductionRoute: typeof AuthenticatedAdminOrdersOrderIdProductionRoute
 }
 
-const AdminRouteChildren: AdminRouteChildren = {
-  AdminCalculatorRoute: AdminCalculatorRoute,
-  AdminEnquiriesRoute: AdminEnquiriesRoute,
-  AdminPriceListRoute: AdminPriceListRoute,
-  AdminIndexRoute: AdminIndexRoute,
-  AdminOffersOfferIdRoute: AdminOffersOfferIdRoute,
-  AdminOffersIndexRoute: AdminOffersIndexRoute,
-  AdminOrdersIndexRoute: AdminOrdersIndexRoute,
-  AdminOrdersOrderIdGlassRoute: AdminOrdersOrderIdGlassRoute,
-  AdminOrdersOrderIdProductionRoute: AdminOrdersOrderIdProductionRoute,
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminCalculatorRoute: AuthenticatedAdminCalculatorRoute,
+  AuthenticatedAdminEnquiriesRoute: AuthenticatedAdminEnquiriesRoute,
+  AuthenticatedAdminPriceListRoute: AuthenticatedAdminPriceListRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminOffersOfferIdRoute: AuthenticatedAdminOffersOfferIdRoute,
+  AuthenticatedAdminOffersIndexRoute: AuthenticatedAdminOffersIndexRoute,
+  AuthenticatedAdminOrdersIndexRoute: AuthenticatedAdminOrdersIndexRoute,
+  AuthenticatedAdminOrdersOrderIdGlassRoute:
+    AuthenticatedAdminOrdersOrderIdGlassRoute,
+  AuthenticatedAdminOrdersOrderIdProductionRoute:
+    AuthenticatedAdminOrdersOrderIdProductionRoute,
 }
 
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRouteWithChildren,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   CartRoute: CartRoute,
   DifferencesRoute: DifferencesRoute,
   OutletRoute: OutletRoute,

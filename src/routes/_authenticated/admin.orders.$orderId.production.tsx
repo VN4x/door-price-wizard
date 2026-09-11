@@ -13,7 +13,7 @@ import { FINISH_LABELS, calculateQuote, getCostLines } from "@/lib/pricing";
 import { useStore } from "@/mock/store";
 import type { DoorLine } from "@/types";
 
-export const Route = createFileRoute("/admin/orders/$orderId/production")({
+export const Route = createFileRoute("/_authenticated/admin/orders/$orderId/production")({
   head: () => ({
     meta: [
       { title: "Production order | Kvaliteetaken admin" },
