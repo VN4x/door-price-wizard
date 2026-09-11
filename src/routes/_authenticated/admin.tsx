@@ -12,8 +12,8 @@ import {
   Tags,
   Users,
 } from "lucide-react";
-import { DemoBar } from "@/components/DemoBar";
 import { useStore } from "@/mock/store";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
