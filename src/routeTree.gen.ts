@@ -23,6 +23,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminCalculatorRouteImport } from './routes/_authenticated/admin.calculator'
 import { Route as AuthenticatedAdminEnquiriesRouteImport } from './routes/_authenticated/admin.enquiries'
 import { Route as AuthenticatedAdminPriceListRouteImport } from './routes/_authenticated/admin.price-list'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminOffersIndexRouteImport } from './routes/_authenticated/admin.offers.index'
 import { Route as AuthenticatedAdminOffersOfferIdRouteImport } from './routes/_authenticated/admin.offers.$offerId'
@@ -102,6 +103,12 @@ const AuthenticatedAdminPriceListRoute =
     path: '/price-list',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -151,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/admin/calculator': typeof AuthenticatedAdminCalculatorRoute
   '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/admin/price-list': typeof AuthenticatedAdminPriceListRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/offers/$offerId': typeof AuthenticatedAdminOffersOfferIdRoute
@@ -171,6 +179,7 @@ export interface FileRoutesByTo {
   '/admin/calculator': typeof AuthenticatedAdminCalculatorRoute
   '/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/admin/price-list': typeof AuthenticatedAdminPriceListRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/offers/$offerId': typeof AuthenticatedAdminOffersOfferIdRoute
@@ -194,6 +203,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/calculator': typeof AuthenticatedAdminCalculatorRoute
   '/_authenticated/admin/enquiries': typeof AuthenticatedAdminEnquiriesRoute
   '/_authenticated/admin/price-list': typeof AuthenticatedAdminPriceListRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/offers/$offerId': typeof AuthenticatedAdminOffersOfferIdRoute
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/admin/calculator'
     | '/admin/enquiries'
     | '/admin/price-list'
+    | '/admin/settings'
     | '/admin/users'
     | '/admin/'
     | '/admin/offers/$offerId'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/admin/calculator'
     | '/admin/enquiries'
     | '/admin/price-list'
+    | '/admin/settings'
     | '/admin/users'
     | '/admin'
     | '/admin/offers/$offerId'
@@ -259,6 +271,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/calculator'
     | '/_authenticated/admin/enquiries'
     | '/_authenticated/admin/price-list'
+    | '/_authenticated/admin/settings'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/offers/$offerId'
@@ -380,6 +393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPriceListRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
       path: '/users'
@@ -429,6 +449,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCalculatorRoute: typeof AuthenticatedAdminCalculatorRoute
   AuthenticatedAdminEnquiriesRoute: typeof AuthenticatedAdminEnquiriesRoute
   AuthenticatedAdminPriceListRoute: typeof AuthenticatedAdminPriceListRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminOffersOfferIdRoute: typeof AuthenticatedAdminOffersOfferIdRoute
@@ -442,6 +463,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCalculatorRoute: AuthenticatedAdminCalculatorRoute,
   AuthenticatedAdminEnquiriesRoute: AuthenticatedAdminEnquiriesRoute,
   AuthenticatedAdminPriceListRoute: AuthenticatedAdminPriceListRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminOffersOfferIdRoute: AuthenticatedAdminOffersOfferIdRoute,
