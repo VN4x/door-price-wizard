@@ -4,10 +4,10 @@ Two new admin screens, plus the real login system behind them. Staff sign in wit
 
 ## Sign in and approval
 
-- New sign-in page for staff. Registration is possible, but a new account starts as "waiting for approval" and can see nothing until you approve it.
-- You (owner) see pending requests on the Users screen and approve, set a role, or reject.
+- New sign-in page for staff. Registration is possible, but a new staff account starts as "waiting for approval" and can see nothing until you approve it. Customers registration is open for everyone with separate rights to see their own related and input only.
+- You (owner) see pending requests on the staff Users screen and approve, set a role, or reject.
 - Roles: owner, sales, production. Costs, purchase prices, margins and the price list stay owner-only, enforced by the database itself — not just hidden in the screen.
-- Customer pages (price page, Slide or HST, outlet, configurator, cart, private offer link) stay open to everyone with no login.
+- Customer pages (price page, Slide or HST, outlet, configurator, cart, private offer link) stay open to everyone with no login. optionally enable  save and access if customer  is registered 
 - Signing out clears everything and returns to the sign-in page; the header shows who is signed in.
 
 ## Users screen (owner only)
@@ -35,7 +35,12 @@ Grouped sections, each saved to the database:
 
 ## What stays as it is
 
-Enquiries, offers, orders, production and glass views keep their current behaviour and layout; they simply require a signed-in staff account now.
+Enquiries, offers, orders, production and glass views keep their current behaviour and layout; they simply require a signed-in staff account now. sales person sees almost same data as cusomer but  will see also all offers and orders list, can edit dimensions (edits logged) etc spec of offer (ie after mesuring before production order, when status production sales cant change anything including not changing status back to pre-production offer/order.), can create invoices of offer and change offer status to order and after payments. online wise sepa payment does this automatically. production changs status according to production processes. including "ready" and "dlevered"
+
+&nbsp;
+
+ps regarding languages check out cpohere blog would this be helpful  
+https://cohere.com/blog/north-small-translate
 
 ## Technical notes
 
